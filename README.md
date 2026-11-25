@@ -14,7 +14,7 @@ A zero-dependency, browser-based parametric 3D base generator for **POP UP PARAD
 - **Interactive 3D & 1:1 2D Previews**: Drag-to-rotate 3D isometric preview (with underside flip and zoom) and a 1:1 10 mm grid top-down blueprint (drag to reposition pegs, right-drag or `Shift+drag` to rotate).
 - **Watertight Manifold Mesh Engine**: Pure JavaScript earcut-with-hole-bridging triangulation in [`mesh.js`](mesh.js) that validates manifold geometry in real time and exports binary STLs.
 - **Calibration & Fit-Test STLs Included**: Ready-to-print peg-fit test gauges and 70×70 mm photo calibration frames are included in the repository and can also be generated directly from the app.
-- **Collection Management**: Preloaded with measured Hololive POP UP PARADE presets ([`figures.js`](figures.js)), plus custom figure creation, Undo/Redo (`Ctrl+Z` / `Ctrl+Y`), browser `localStorage` auto-save, and `Export` / `Import Config JSON`.
+- **Collection Management**: Preloaded with measured Hololive POP UP PARADE presets ([`figures.js`](figures.js)), live figure search (by name, group, or notes), custom figure creation, Undo/Redo (`Ctrl+Z` / `Ctrl+Y`), browser `localStorage` auto-save, and `Export` / `Import Config JSON`.
 
 ---
 

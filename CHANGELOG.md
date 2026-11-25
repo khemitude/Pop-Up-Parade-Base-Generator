@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Figure Search Box**: Filter figures in **2. Your Figures** in real time by name, group, or notes.
+
+### Changed
+- **Default Hole Clearance**: Changed default `clearance` to `0.15 mm` and added UI/documentation warnings against `0.00` clearance without gauge testing or slicer XY hole compensation.
+- **Modular Presets**: Extracted `DEFAULT_CONFIG` into `figures.js`, removed redundant `figures.json`, and updated Nekomata Okayu's peg layout.
+
 ## [1.0.0] - 2026-11-25
 
 ### Added

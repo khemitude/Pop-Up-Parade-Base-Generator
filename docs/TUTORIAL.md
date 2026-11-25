@@ -19,7 +19,7 @@ Before designing bases for your whole shelf, print two small helper tools:
 ## Step 2: Select or Create Your Figure
 
 1. Open [`index.html`](../index.html) in your browser.
-2. Under **2. Your Figures** (left panel), click an existing preset to inspect/edit it, or click **+ Add Custom Figure** to create a new entry.
+2. Under **2. Your Figures** (left panel), use the search box to filter by name, group, or notes and click an existing preset to inspect/edit it, or click **+ Add Custom Figure** to create a new entry.
 
 ---
 

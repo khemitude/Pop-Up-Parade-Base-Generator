@@ -23,6 +23,7 @@ All settings in **1. Uniform Base Style** apply uniformly across every figure in
 ## 2. Figure Collection & Persistence
 
 - **Preloaded Presets**: Ships with measured POP UP PARADE presets in [`figures.js`](../figures.js) (`DEFAULT_CONFIG`).
+- **Figure Search**: Filter the figure list in real time by figure name, group/series, or notes.
 - **Auto-Save**: All edits automatically save to browser `localStorage`.
 - **Undo / Redo**: Header buttons and keyboard shortcuts (`Ctrl+Z` to Undo, `Ctrl+Y` or `Ctrl+Shift+Z` to Redo).
 - **Reset Defaults / Undo Reset**: Restores the built-in presets, with a one-click **Undo Reset (Restore Previous)** safety net.
