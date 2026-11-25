@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **Center-to-Center (C2C) Pin Solver**: Live `P1 ↔ P2`, `P1 ↔ P3`, and `P2 ↔ P3` distance readout and trilateration solver (**Apply C2C → X / Y** with **Flip** toggle) for 2- and 3-peg caliper measurements, plus a quick caliper-vs-photo workflow hint.
+- **Center-to-Center (C2C) Pin Solver**: Live `P1 ↔ P2`, `P1 ↔ P3`, and `P2 ↔ P3` distance readout and trilateration solver (**Apply C2C → X / Y** with **Flip** toggle) for 2- and 3-peg caliper measurements.
+- **Workflow Hints**: Added concise UI hints for global base settings, browser auto-save/backups, caliper-vs-photo entry, and `.zip` batch export filtering.
 - **Figure Search Box**: Filter figures in **2. Your Figures** in real time by name, group, or notes.
 - **Single-Figure Share & Merge**: Export/copy a single figure's JSON (`Export Figure JSON`) and merge imported figure(s) (`Merge Figure(s)`) without overwriting existing presets.
 - **Underside Name Stamp**: Optional embossed figure name on the inner cavity floor in Hollow Shell mode (`mesh.js`: `appendStampedLabel`), auto-scaling to fit smaller base diameters.

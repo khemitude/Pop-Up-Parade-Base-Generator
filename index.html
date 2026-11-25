@@ -32,6 +32,7 @@
     <!-- LEFT: Uniform Base Settings -->
     <section class="card">
       <h2>1. Uniform Base Style</h2>
+      <div class="muted-sm">Shared across all figures in your collection.</div>
       <div class="field-grid">
         <div class="field full">
           <label>Base Shape</label>
@@ -114,6 +115,7 @@
       </div>
 
       <h2>2. Your Figures</h2>
+      <div class="muted-sm">Auto-saved in this browser — use Export Config JSON for backups.</div>
       <input type="search" id="figureSearch" placeholder="Search figures by name or group…" aria-label="Search figures" />
       <div class="figure-list" id="figureList"></div>
       <div class="field-grid">
@@ -136,9 +138,10 @@
           </div>
           <div class="row-gap">
             <button class="primary" id="btnDownloadOne">Download STL</button>
-            <button class="ok" id="btnDownloadAll">Download All Measured STLs</button>
+            <button class="ok" id="btnDownloadAll" title="Bundles every figure marked Measured &amp; Verified into one .zip">Download All Measured STLs (.zip)</button>
           </div>
         </div>
+        <div class="muted-sm">Batch download bundles every figure marked <em>Measured &amp; Verified</em> into one <code>.zip</code>.</div>
         <div id="validationBar" class="status-bar ok">Mesh ready — watertight manifold geometry.</div>
       </div>
 
