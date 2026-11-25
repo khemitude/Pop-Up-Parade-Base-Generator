@@ -94,10 +94,11 @@
       "stanceAngle": 0,
       "pegDistance": 24,
       "pegs": [
-        { "label": "Left Foot (Toe)", "x": -27.48, "y": -2.28, "diameter": 5.1, "depth": 10, "shape": "hexagon", "flatAngle": 0, "through": false, "enabled": true },
-        { "label": "Left Foot (Heel)", "x": -25.02, "y": 11.64, "diameter": 6.1, "depth": 10, "shape": "hexagon", "flatAngle": 0, "through": false, "enabled": true },
-        { "label": "Right Foot", "x": 27.48, "y": -11.64, "diameter": 6, "depth": 10, "shape": "hexagon", "flatAngle": 0, "through": false, "enabled": true }
-      ]
+        { "label": "Left Foot", "x": -25.37, "y": 0.91, "diameter": 6, "depth": 10, "shape": "hexagon", "flatAngle": 0, "through": false, "enabled": true },
+        { "label": "Right Foot (Heel)", "x": 25.37, "y": 6.4, "diameter": 5.1, "depth": 10, "shape": "hexagon", "flatAngle": 0, "through": false, "enabled": true },
+        { "label": "Right Foot (Toe)", "x": 25.35, "y": -6.4, "diameter": 6.1, "depth": 10, "shape": "hexagon", "flatAngle": 0, "through": false, "enabled": true }
+      ],
+      "facing": "down"
     },
     {
       "id": "botan",

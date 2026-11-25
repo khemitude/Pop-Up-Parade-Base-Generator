@@ -71,7 +71,8 @@ Requires **Node.js** (tested on v22).
 | [`photo-measurer.js`](photo-measurer.js) | Photo Peg Measurer UI, perspective homography math, and canvas tools |
 | [`photo-detect.js`](photo-detect.js) | Computer-vision auto-detectors for calibration frames, L-brackets, hex bases, and base holes |
 | [`mesh.js`](mesh.js) | Parametric 3D mesh & binary STL generator (`PUPMesh`, works in browser & Node.js) |
-| [`figures.json`](figures.json) | Default base configuration and pre-measured figure presets |
+| [`figures.js`](figures.js) | Default base configuration and pre-measured figure presets (`DEFAULT_CONFIG`) |
+| [`figures.json`](figures.json) | Raw JSON copy of default base configuration and pre-measured figure presets |
 | [`verify_mesh.js`](verify_mesh.js) | Node.js watertight manifold test suite & utility STL generator (`npm test`) |
 | [`docs/`](docs/) | Tutorial ([`TUTORIAL.md`](docs/TUTORIAL.md)) and reference guide ([`FEATURES.md`](docs/FEATURES.md)) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Release history (SemVer) |
