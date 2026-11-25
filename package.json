@@ -1,0 +1,25 @@
+{
+  "name": "pop-up-parade-base-generator",
+  "version": "1.0.0",
+  "description": "Parametric 3D-printable base generator for POP UP PARADE figures with perspective-corrected photo peg measurement and watertight binary STL export.",
+  "main": "mesh.js",
+  "scripts": {
+    "test": "node verify_mesh.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/khemitude/Pop-Up-Parade-Base-Generator.git"
+  },
+  "homepage": "https://khemitude.github.io/Pop-Up-Parade-Base-Generator/",
+  "keywords": [
+    "3d-printing",
+    "stl-generator",
+    "pop-up-parade",
+    "figure-base",
+    "parametric-design",
+    "webgl",
+    "vanilla-js",
+    "anime-figures"
+  ],
+  "license": "MIT"
+}
