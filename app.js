@@ -771,9 +771,39 @@ document.getElementById('btnDownloadTestDisc').onclick = () => {
   if (!fig) return;
   syncDistanceToPegs(fig);
   const baseParams = getMeshParams(fig);
+  const clearance = baseParams.clearance || 0;
+  const enabled = (fig.pegs || []).filter((p) => p.enabled !== false);
+  if (!enabled.length) return;
+
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const p of enabled) {
+    const r = ((Number(p.diameter) || 4) + clearance) / 2;
+    const x = Number(p.x) || 0;
+    const y = Number(p.y) || 0;
+    if (x - r < minX) minX = x - r;
+    if (x + r > maxX) maxX = x + r;
+    if (y - r < minY) minY = y - r;
+    if (y + r > maxY) maxY = y + r;
+  }
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  const stripW = Number(Math.max(24, (maxX - minX) + 10).toFixed(1));
+  const stripD = Number(Math.max(18, (maxY - minY) + 10).toFixed(1));
+  const shiftedFig = {
+    ...fig,
+    pegs: enabled.map((p) => ({
+      ...p,
+      x: Number(((Number(p.x) || 0) - cx).toFixed(2)),
+      y: Number(((Number(p.y) || 0) - cy).toFixed(2)),
+    })),
+  };
   const testParams = {
     ...baseParams,
-    height: 3,
+    shape: 'rounded_rect',
+    diameter: stripW,
+    depth: stripD,
+    cornerRadius: Math.min(5, Math.min(stripW, stripD) * 0.25),
+    height: 2.0,
     hollow: false,
     stepped: false,
     chamferEnabled: false,
@@ -782,11 +812,11 @@ document.getElementById('btnDownloadTestDisc').onclick = () => {
     stampName: false,
   };
   try {
-    const tris = PUPMesh.buildBaseMesh(testParams, fig);
-    const stl = PUPMesh.trianglesToBinarySTL(tris, `PUP Fit-Test Disc 3mm - ${fig.name}`);
-    downloadBytes(stl, `pup_fit_test_${fig.id}_${testParams.diameter}mm_3mm.stl`);
+    const tris = PUPMesh.buildBaseMesh(testParams, shiftedFig);
+    const stl = PUPMesh.trianglesToBinarySTL(tris, `PUP Fit-Test Strip 2mm - ${fig.name}`);
+    downloadBytes(stl, `pup_fit_test_${fig.id}_${stripW}x${stripD}mm_2mm.stl`);
   } catch (err) {
-    alert('Could not generate Fit-Test Disc: ' + err.message);
+    alert('Could not generate Fit-Test Strip: ' + err.message);
   }
 };
 
