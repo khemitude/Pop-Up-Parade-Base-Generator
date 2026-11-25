@@ -298,6 +298,8 @@ function renderBaseControls() {
   document.getElementById('stepHeight').value = d.stepHeight;
   document.getElementById('magnetPocket').checked = d.magnetPocket;
   document.getElementById('baseHollow').checked = Boolean(d.hollow);
+  document.getElementById('baseStampName').checked = Boolean(d.stampName);
+  document.getElementById('stampNameWrap').style.display = d.hollow ? '' : 'none';
   document.getElementById('magnetDiameter').value = d.magnetDiameter;
   document.getElementById('magnetDepth').value = d.magnetDepth;
 
@@ -416,8 +418,27 @@ function rebuildAndDraw() {
 
   try {
     currentTris = PUPMesh.buildBaseMesh(params, fig);
-    bar.className = 'status-bar ok';
-    bar.textContent = `Mesh ready — ${currentTris.length} triangles, watertight manifold STL (${params.diameter} mm ${state.defaults.shape}).`;
+    const warnings = [];
+    const activePegs = (fig.pegs || []).filter((p) => p.enabled !== false);
+    const maxSafeR = params.diameter / 2 - (params.stepped ? (Number(params.stepInset) || 0) : 0) - (params.chamfer || 0);
+    activePegs.forEach((p, idx) => {
+      const holeR = ((Number(p.diameter) || 4) + (params.clearance || 0)) / 2;
+      const distFromCenter = Math.hypot(Number(p.x) || 0, Number(p.y) || 0);
+      if (distFromCenter + holeR > maxSafeR - 2.0) {
+        warnings.push(`P${idx + 1} is within 2 mm of the top edge`);
+      }
+      const isThrough = p.shape === 'round' && Boolean(p.through);
+      if (!isThrough && (Number(p.depth) || 0) >= params.height - 0.8) {
+        warnings.push(`P${idx + 1} depth (${p.depth} mm) leaves <0.8 mm floor (height ${params.height} mm)`);
+      }
+    });
+    if (warnings.length) {
+      bar.className = 'status-bar warn';
+      bar.textContent = `Watertight (${currentTris.length} tris) — Warning: ${warnings.join('; ')}.`;
+    } else {
+      bar.className = 'status-bar ok';
+      bar.textContent = `Mesh ready — ${currentTris.length} triangles, watertight manifold STL (${params.diameter} mm ${state.defaults.shape}).`;
+    }
   } catch (err) {
     currentTris = [];
     bar.className = 'status-bar warn';
@@ -447,7 +468,7 @@ function renderAll() {
 }
 
 // --- Event Listeners ---
-['baseShape', 'baseDiameter', 'baseHeight', 'baseChamferEnabled', 'baseChamfer', 'holeClearance', 'baseStepped', 'stepInset', 'stepHeight', 'magnetPocket', 'magnetDiameter', 'magnetDepth', 'baseHollow'].forEach((id) => {
+['baseShape', 'baseDiameter', 'baseHeight', 'baseChamferEnabled', 'baseChamfer', 'holeClearance', 'baseStepped', 'stepInset', 'stepHeight', 'magnetPocket', 'magnetDiameter', 'magnetDepth', 'baseHollow', 'baseStampName'].forEach((id) => {
   const el = document.getElementById(id);
   el.onchange = el.oninput = () => {
     const d = state.defaults;
@@ -472,6 +493,7 @@ function renderAll() {
     else if (id === 'stepHeight') d.stepHeight = Number(el.value);
     else if (id === 'magnetPocket') { d.magnetPocket = el.checked; renderBaseControls(); }
     else if (id === 'baseHollow') { d.hollow = el.checked; renderBaseControls(); }
+    else if (id === 'baseStampName') d.stampName = el.checked;
     else if (id === 'magnetDiameter') d.magnetDiameter = Number(el.value);
     else if (id === 'magnetDepth') d.magnetDepth = Number(el.value);
     saveState();
@@ -655,24 +677,152 @@ document.getElementById('btnDownloadOne').onclick = () => {
   downloadBytes(stl, `pup_base_${fig.id}_${state.defaults.shape}_${state.defaults.diameter}mm.stl`);
 };
 
+function createZipBytes(entries) {
+  const crcTable = new Uint32Array(256);
+  for (let i = 0; i < 256; i++) {
+    let c = i;
+    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+    crcTable[i] = c >>> 0;
+  }
+  const crc32 = (bytes) => {
+    let c = 0xffffffff;
+    for (let i = 0; i < bytes.length; i++) c = crcTable[(c ^ bytes[i]) & 0xff] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  };
+  const enc = new TextEncoder();
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+
+  for (const { name, data } of entries) {
+    const nameBytes = enc.encode(name);
+    const crc = crc32(data);
+    const size = data.length;
+
+    const local = new Uint8Array(30 + nameBytes.length + size);
+    const lv = new DataView(local.buffer);
+    lv.setUint32(0, 0x04034b50, true);
+    lv.setUint16(4, 20, true);
+    lv.setUint16(6, 0x0800, true);
+    lv.setUint16(8, 0, true);
+    lv.setUint32(14, crc, true);
+    lv.setUint32(18, size, true);
+    lv.setUint32(22, size, true);
+    lv.setUint16(26, nameBytes.length, true);
+    local.set(nameBytes, 30);
+    local.set(data, 30 + nameBytes.length);
+    localParts.push(local);
+
+    const central = new Uint8Array(46 + nameBytes.length);
+    const cv = new DataView(central.buffer);
+    cv.setUint32(0, 0x02014b50, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0x0800, true);
+    cv.setUint16(10, 0, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, size, true);
+    cv.setUint32(24, size, true);
+    cv.setUint16(28, nameBytes.length, true);
+    cv.setUint32(42, offset, true);
+    central.set(nameBytes, 46);
+    centralParts.push(central);
+
+    offset += local.length;
+  }
+
+  const centralSize = centralParts.reduce((s, p) => s + p.length, 0);
+  const eocd = new Uint8Array(22);
+  const ev = new DataView(eocd.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, entries.length, true);
+  ev.setUint16(10, entries.length, true);
+  ev.setUint32(12, centralSize, true);
+  ev.setUint32(16, offset, true);
+
+  const total = offset + centralSize + eocd.length;
+  const out = new Uint8Array(total);
+  let pos = 0;
+  for (const p of localParts) { out.set(p, pos); pos += p.length; }
+  for (const p of centralParts) { out.set(p, pos); pos += p.length; }
+  out.set(eocd, pos);
+  return out;
+}
+
 document.getElementById('btnDownloadAll').onclick = () => {
   const params = getMeshParams();
   const targets = state.figures.filter((f) => f.measured);
   const list = targets.length ? targets : state.figures;
-  list.forEach((fig, idx) => {
-    setTimeout(() => {
-      syncDistanceToPegs(fig);
-      const tris = PUPMesh.buildBaseMesh(params, fig);
-      const stl = PUPMesh.trianglesToBinarySTL(tris, `PUP Base - ${fig.name}`);
-      downloadBytes(stl, `pup_base_${fig.id}_${state.defaults.shape}_${state.defaults.diameter}mm.stl`);
-    }, idx * 250);
+  const entries = list.map((fig) => {
+    syncDistanceToPegs(fig);
+    const tris = PUPMesh.buildBaseMesh(params, fig);
+    const stl = PUPMesh.trianglesToBinarySTL(tris, `PUP Base - ${fig.name}`);
+    return {
+      name: `pup_base_${fig.id}_${state.defaults.shape}_${state.defaults.diameter}mm.stl`,
+      data: stl,
+    };
   });
+  const zipBytes = createZipBytes(entries);
+  downloadBytes(zipBytes, `pup_bases_${state.defaults.shape}_${state.defaults.diameter}mm.zip`);
 };
 
 document.getElementById('btnExportGauge').onclick = () => {
-  const tris = PUPMesh.buildTestGaugeMesh(1.8, 0.2, 23);
-  const stl = PUPMesh.trianglesToBinarySTL(tris, 'PUP Peg-Fit Test Gauge 1.8-6.2mm (0.2mm step)');
-  downloadBytes(stl, 'pup_peg_fit_test_gauge_1.8_to_6.2mm.stl');
+  const preset = document.getElementById('gaugePreset')?.value || 'standard';
+  const cfg = preset === 'fine'
+    ? { start: 3.0, step: 0.1, count: 21, label: '3.0-5.0mm (0.1mm step)', file: 'pup_peg_fit_test_gauge_3.0_to_5.0mm_fine.stl' }
+    : preset === 'micro'
+      ? { start: 3.6, step: 0.1, count: 11, label: '3.6-4.6mm (0.1mm step)', file: 'pup_peg_fit_test_gauge_3.6_to_4.6mm_micro.stl' }
+      : { start: 1.8, step: 0.2, count: 23, label: '1.8-6.2mm (0.2mm step)', file: 'pup_peg_fit_test_gauge_1.8_to_6.2mm.stl' };
+  const tris = PUPMesh.buildTestGaugeMesh(cfg.start, cfg.step, cfg.count);
+  const stl = PUPMesh.trianglesToBinarySTL(tris, `PUP Peg-Fit Test Gauge ${cfg.label}`);
+  downloadBytes(stl, cfg.file);
+};
+
+document.getElementById('btnShareFigure').onclick = () => {
+  const fig = getActiveFigure();
+  if (!fig) return;
+  const json = JSON.stringify(fig, null, 2);
+  downloadBytes(new TextEncoder().encode(json), `pup_figure_${fig.id}.json`);
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(json).catch(() => {});
+  }
+};
+
+document.getElementById('btnMergeFigures').onclick = () => document.getElementById('fileMergeFigures').click();
+document.getElementById('fileMergeFigures').onchange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      const incoming = Array.isArray(parsed?.figures)
+        ? parsed.figures
+        : (parsed && parsed.pegs && parsed.name ? [parsed] : null);
+      if (!incoming || !incoming.length) throw new Error('Invalid figure JSON');
+
+      commitHistoryNow();
+      let firstAddedId = null;
+      for (const item of incoming) {
+        const clone = JSON.parse(JSON.stringify(item));
+        let newId = clone.id || clone.name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+        if (state.figures.some((f) => f.id === newId)) {
+          newId = `${newId}_${Date.now().toString().slice(-4)}`;
+        }
+        clone.id = newId;
+        state.figures.push(clone);
+        if (!firstAddedId) firstAddedId = newId;
+      }
+      if (firstAddedId) activeId = firstAddedId;
+      saveState();
+      commitHistoryNow();
+      renderAll();
+    } catch (err) {
+      alert('Invalid figure JSON file.');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
 };
 
 document.getElementById('btnExportJson').onclick = () => {

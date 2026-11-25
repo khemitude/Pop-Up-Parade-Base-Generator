@@ -16,7 +16,12 @@
       <button id="btnUndo" title="Undo (Ctrl+Z)" disabled>↶ Undo</button>
       <button id="btnRedo" title="Redo (Ctrl+Y / Ctrl+Shift+Z)" disabled>↷ Redo</button>
       <button id="btnExportCalBlock" title="Print a 70x70mm square frame for perspective-corrected photo measurements">Download Calibration Frame STL</button>
-      <button id="btnExportGauge" title="Print a quick 10-minute strip to test peg hole fit">Download Peg-Fit Test Gauge STL</button>
+      <select id="gaugePreset" class="gauge-select" title="Peg-Fit Test Gauge range">
+        <option value="standard">Gauge: 1.8–6.2mm (0.2mm)</option>
+        <option value="fine">Gauge: 3.0–5.0mm (0.1mm Fine)</option>
+        <option value="micro">Gauge: 3.6–4.6mm (0.1mm Micro)</option>
+      </select>
+      <button id="btnExportGauge" title="Print a quick strip to test peg hole fit">Download Gauge STL</button>
       <button id="btnExportJson">Export Config JSON</button>
       <button id="btnImportJson">Import Config JSON</button>
       <input type="file" id="fileImportJson" accept=".json" style="display:none" />
@@ -91,6 +96,13 @@
           </label>
         </div>
 
+        <div class="field full" id="stampNameWrap">
+          <label class="checkbox-row" title="Embosses the figure name onto the inner cavity floor (Hollow Shell mode)">
+            <input type="checkbox" id="baseStampName" />
+            Stamp Figure Name on Underside (Hollow Shell)
+          </label>
+        </div>
+
         <div class="field" id="magDiaWrap" style="display:none">
           <label>Magnet Dia (mm)</label>
           <input type="number" id="magnetDiameter" min="3" max="20" step="0.2" value="8.2" />
@@ -107,6 +119,9 @@
       <div class="field-grid">
         <button id="btnAddFigure">+ Add Custom Figure</button>
         <button id="btnResetPresets">Reset Defaults</button>
+        <button id="btnShareFigure" title="Export & copy JSON for only the active figure">Export Figure JSON</button>
+        <button id="btnMergeFigures" title="Import and merge figure(s) without overwriting your collection">Merge Figure(s)</button>
+        <input type="file" id="fileMergeFigures" accept=".json" style="display:none" />
         <button id="btnUndoReset" style="grid-column: 1 / -1; display:none;">Undo Reset (Restore Previous)</button>
       </div>
     </section>

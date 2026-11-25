@@ -17,6 +17,7 @@ All settings in **1. Uniform Base Style** apply uniformly across every figure in
 | **Stepped Plinth** | Splits the base into a lower tier and an inset upper tier (`Step Inset` and `Lower Tier Height`). |
 | **Underside Magnet Pocket** | Cuts a centered circular recess into the bottom face (`Magnet Dia` and `Magnet Depth`). |
 | **Hollow Shell (Face-Down Print)** | Experimental mode that hollows the underside and generates internal peg bosses (mirroring injection-molded bases) for face-down printing. |
+| **Stamp Figure Name on Underside** | Available in Hollow Shell mode; embosses the figure's name onto the inner cavity floor so batch-printed bases are easy to tell apart. |
 
 ---
 
@@ -24,10 +25,13 @@ All settings in **1. Uniform Base Style** apply uniformly across every figure in
 
 - **Preloaded Presets**: Ships with measured POP UP PARADE presets in [`figures.js`](../figures.js) (`DEFAULT_CONFIG`).
 - **Figure Search**: Filter the figure list in real time by figure name, group/series, or notes.
+- **Export Figure JSON / Merge Figure(s)**: Share a single figure's JSON (downloads + copies to clipboard) or merge imported figure(s) into your existing collection without overwriting it.
 - **Auto-Save**: All edits automatically save to browser `localStorage`.
 - **Undo / Redo**: Header buttons and keyboard shortcuts (`Ctrl+Z` to Undo, `Ctrl+Y` or `Ctrl+Shift+Z` to Redo).
 - **Reset Defaults / Undo Reset**: Restores the built-in presets, with a one-click **Undo Reset (Restore Previous)** safety net.
 - **Export / Import Config JSON**: Save or restore your entire base style and figure list as a `.json` file.
+- **Batch ZIP & Custom Test Gauges**: **Download All Measured STLs** bundles all measured bases into a single `.zip` archive; the header **Gauge** selector lets you export `1.8–6.2 mm (0.2 mm)`, `3.0–5.0 mm (0.1 mm Fine)`, or `3.6–4.6 mm (0.1 mm Micro)` fit-test gauges.
+- **Safety Warnings**: The status bar warns if any peg hole sits within `2 mm` of the top perimeter or if a blind hole leaves less than `0.8 mm` of floor thickness.
 
 ---
 

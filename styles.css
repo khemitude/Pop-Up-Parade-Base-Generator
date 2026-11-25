@@ -442,3 +442,4 @@ canvas { display: block; width: 100%; height: auto; }
 .photo-hint-title { font-size: 1rem; color: var(--text); }
 .photo-hint-body { font-size: 0.82rem; max-width: 460px; }
 .photo-footer { margin-top: auto; display: flex; gap: 8px; }
+.gauge-select { width: auto; padding: 6px 8px; font-size: 0.8rem; }

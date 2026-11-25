@@ -78,6 +78,7 @@ In **1. Uniform Base Style** (left panel), configure the shared look for all you
    - **Stepped Plinth**: Creates a 2-tier beveled display base (**Step Inset** and **Lower Tier Height**).
    - **Underside Magnet Pocket**: Adds a centered bottom recess (e.g., `8.2 mm` × `2.2 mm` for an 8×2 mm magnet or steel washer).
    - **Hollow Shell (Face-Down Print — Experimental)**: Hollows the underside with internal peg bosses so the base prints face-down like an injection-molded PUP base.
+   - **Stamp Figure Name on Underside (Hollow Shell)**: Embosses the figure's name on the inner cavity floor—handy when batch-printing multiple bases.
 
 ---
 
@@ -94,7 +95,7 @@ In **1. Uniform Base Style** (left panel), configure the shared look for all you
 
 ## Step 6: Export STL & 3D Print
 
-1. Click **Download STL** to export the active figure's base, or **Download All Measured STLs** to batch-export every figure marked as measured.
+1. Click **Download STL** to export the active figure's base, or **Download All Measured STLs** to batch-export every figure marked as measured into a single `.zip` file.
 2. **Slicing Tips**:
    - **Solid / Stepped Bases**: Print right-side up (flat bottom on the build plate). `0.16–0.20 mm` layer height, `15–20%` gyroid infill, 3–4 walls. No supports needed.
    - **Hollow Shell Bases**: Print **face-down** (top display surface on the build plate) for a smooth textured/PEI top finish.

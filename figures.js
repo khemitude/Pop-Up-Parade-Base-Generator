@@ -18,6 +18,7 @@ const DEFAULT_CONFIG = {
     magnetDiameter: 8.2,
     magnetDepth: 2.2,
     hollow: true,
+    stampName: false,
   },
   figures: [
     {
