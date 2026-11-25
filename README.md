@@ -14,7 +14,7 @@ A zero-dependency, browser-based parametric 3D base generator for **POP UP PARAD
 - **Interactive 3D & 1:1 2D Previews**: Drag-to-rotate 3D isometric preview (with underside flip and zoom) and a 1:1 10 mm grid top-down blueprint (drag to reposition pegs, right-drag or `Shift+drag` to rotate).
 - **Watertight Manifold Mesh Engine**: Pure JavaScript earcut-with-hole-bridging triangulation in [`mesh.js`](mesh.js) that validates manifold geometry in real time and exports binary STLs.
 - **Calibration & Fit-Test STLs Included**: Ready-to-print peg-fit test gauges and 70×70 mm photo calibration frames are included in the repository and can also be generated directly from the app.
-- **Collection Management**: Preloaded with measured Hololive POP UP PARADE presets ([`figures.json`](figures.json)), plus custom figure creation, Undo/Redo (`Ctrl+Z` / `Ctrl+Y`), browser `localStorage` auto-save, and `Export` / `Import Config JSON`.
+- **Collection Management**: Preloaded with measured Hololive POP UP PARADE presets ([`figures.js`](figures.js)), plus custom figure creation, Undo/Redo (`Ctrl+Z` / `Ctrl+Y`), browser `localStorage` auto-save, and `Export` / `Import Config JSON`.
 
 ---
 
@@ -72,7 +72,6 @@ Requires **Node.js** (tested on v22).
 | [`photo-detect.js`](photo-detect.js) | Computer-vision auto-detectors for calibration frames, L-brackets, hex bases, and base holes |
 | [`mesh.js`](mesh.js) | Parametric 3D mesh & binary STL generator (`PUPMesh`, works in browser & Node.js) |
 | [`figures.js`](figures.js) | Default base configuration and pre-measured figure presets (`DEFAULT_CONFIG`) |
-| [`figures.json`](figures.json) | Raw JSON copy of default base configuration and pre-measured figure presets |
 | [`verify_mesh.js`](verify_mesh.js) | Node.js watertight manifold test suite & utility STL generator (`npm test`) |
 | [`docs/`](docs/) | Tutorial ([`TUTORIAL.md`](docs/TUTORIAL.md)) and reference guide ([`FEATURES.md`](docs/FEATURES.md)) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Release history (SemVer) |
