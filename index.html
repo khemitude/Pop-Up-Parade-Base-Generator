@@ -123,7 +123,8 @@
         <button id="btnResetPresets">Reset Defaults</button>
         <button id="btnShareFigure" title="Export & copy JSON for only the active figure">Export Figure JSON</button>
         <button id="btnMergeFigures" title="Import and merge figure(s) without overwriting your collection">Merge Figure(s)</button>
-        <button id="btnCopyShareLink" class="col-span-full" title="Copy a shareable URL that imports this figure when opened">Copy Shareable Figure Link</button>
+        <button id="btnCopyShareLink" title="Copy a shareable URL that imports this figure when opened">Copy Share Link</button>
+        <button id="btnCopyMarkdown" title="Copy a formatted Markdown table row for GitHub Issues or the Wiki Figure Measurements Database">Copy Wiki Row</button>
         <input type="file" id="fileMergeFigures" accept=".json" style="display:none" />
         <button id="btnUndoReset" style="grid-column: 1 / -1; display:none;">Undo Reset (Restore Previous)</button>
       </div>
@@ -160,6 +161,11 @@
 
       <div class="canvas-wrap">
         <div class="canvas-label">Top-Down 1:1 Blueprint (10 mm grid — drag to move, right-drag or Shift+drag to rotate)</div>
+        <div class="canvas-controls">
+          <label class="checkbox-row" style="font-size:0.74rem; background:rgba(15,19,26,0.8); padding:4px 8px; border-radius:6px; border:1px solid var(--border);">
+            <input type="checkbox" id="chkShowC2CLines" checked /> C2C Lines
+          </label>
+        </div>
         <canvas id="canvas2d" width="760" height="360"></canvas>
       </div>
     </section>

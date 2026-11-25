@@ -25,7 +25,7 @@ All settings in **1. Uniform Base Style** apply uniformly across every figure in
 
 - **Preloaded Presets**: Ships with measured POP UP PARADE presets in [`figures.js`](../figures.js) (`DEFAULT_CONFIG`).
 - **Figure Search**: Filter the figure list in real time by figure name, group/series, or notes.
-- **Export Figure JSON / Merge Figure(s) / Shareable Link**: Share a single figure's JSON (downloads + copies to clipboard), copy a one-click **`#fig=...` Shareable Figure Link**, or merge imported figure(s) into your existing collection without overwriting it.
+- **Export Figure JSON / Merge Figure(s) / Shareable Link / Wiki Row**: Share a single figure's JSON (downloads + copies to clipboard), copy a one-click **`#fig=...` Shareable Figure Link**, copy a formatted **Wiki Markdown Row** for GitHub/Wiki contributions, or merge imported figure(s) into your existing collection without overwriting it.
 - **Per-Figure Base Width Override**: Optionally override **Width / Diameter (mm)** for a specific figure (e.g., oversized POP UP PARADE L/SP bases) while keeping the shared uniform style.
 - **Auto-Save**: All edits automatically save to browser `localStorage`.
 - **Undo / Redo**: Header buttons and keyboard shortcuts (`Ctrl+Z` to Undo, `Ctrl+Y` or `Ctrl+Shift+Z` to Redo).

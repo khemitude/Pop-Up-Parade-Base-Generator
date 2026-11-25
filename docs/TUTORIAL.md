@@ -86,7 +86,7 @@ In **1. Uniform Base Style** (left panel), configure the shared look for all you
 ## Step 5: Preview & Verify
 
 - **3D Isometric Preview**: Drag to rotate, scroll to zoom, and click **Flip Bottom** to inspect underside magnet pockets, hollow bosses, or through-holes.
-- **Top-Down 1:1 Blueprint**: Shows the base outline and peg holes on a 10 mm grid.
+- **Top-Down 1:1 Blueprint**: Shows the base outline, peg holes, and toggleable **C2C Lines** (live millimeter distances between pegs) on a 10 mm grid.
   - **Drag** a peg to reposition it, or **Right-drag / `Shift+drag`** to rotate the peg group.
   - Use **Center Holes** or the **Rotate ±15° / ±90° / 180°** buttons to align the figure's facing direction.
 - Confirm the status bar reads: `Mesh ready — watertight manifold geometry.`
@@ -100,4 +100,4 @@ In **1. Uniform Base Style** (left panel), configure the shared look for all you
 2. **Slicing Tips**:
    - **Solid / Stepped Bases**: Print right-side up (flat bottom on the build plate). `0.16–0.20 mm` layer height, `15–20%` gyroid infill, 3–4 walls. No supports needed.
    - **Hollow Shell Bases**: Print **face-down** (top display surface on the build plate) for a smooth textured/PEI top finish.
-3. **Backup & Share**: Click **Export Config JSON** in the header to back up your entire collection, or use **Export Figure JSON**, **Copy Shareable Figure Link**, and **Merge Figure(s)** under **2. Your Figures** to share or import individual figures.
+3. **Backup & Share**: Click **Export Config JSON** in the header to back up your entire collection, or use **Export Figure JSON**, **Copy Share Link**, **Copy Wiki Row**, and **Merge Figure(s)** under **2. Your Figures** to share or import individual figures.

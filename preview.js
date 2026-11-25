@@ -117,6 +117,40 @@ function draw2D(params, fig) {
     ctx.fillText(labelText, chosen[0], chosen[1]);
   });
 
+  // Center-to-center distance lines between pegs
+  const showC2CLines = document.getElementById('chkShowC2CLines')?.checked !== false;
+  if (showC2CLines && pegs.length >= 2 && pegs.length <= 4) {
+    ctx.save();
+    for (let i = 0; i < pegs.length; i++) {
+      for (let j = i + 1; j < pegs.length; j++) {
+        const a = pegs[i], b = pegs[j];
+        const distMm = Math.hypot((b.x || 0) - (a.x || 0), (b.y || 0) - (a.y || 0));
+        if (distMm < 0.5) continue;
+        const [ax, ay] = toPx(a.x, a.y);
+        const [bx, by] = toPx(b.x, b.y);
+        ctx.setLineDash([3, 4]);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+        ctx.lineWidth = 1.25;
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(bx, by);
+        ctx.stroke();
+
+        const mx = (ax + bx) / 2;
+        const my = (ay + by) / 2;
+        const txt = `${distMm.toFixed(1)} mm`;
+        ctx.font = '10px sans-serif';
+        const tw = ctx.measureText(txt).width;
+        ctx.fillStyle = 'rgba(15, 19, 26, 0.85)';
+        ctx.fillRect(mx - tw / 2 - 3, my - 7, tw + 6, 13);
+        ctx.fillStyle = '#7dd3fc';
+        ctx.textAlign = 'center';
+        ctx.fillText(txt, mx, my + 3);
+      }
+    }
+    ctx.restore();
+  }
+
   // Magnet pocket indicator (underside)
   if (params.magnetPocket) {
     const mDia = Number(params.magnetDiameter) || 8.2;
@@ -443,4 +477,6 @@ document.getElementById('btnZoomReset').onclick = () => {
     renderPegControls();
     rebuildAndDraw();
   };
+  const c2dToggle = document.getElementById('chkShowC2CLines');
+  if (c2dToggle) c2dToggle.onchange = () => rebuildAndDraw();
 })();

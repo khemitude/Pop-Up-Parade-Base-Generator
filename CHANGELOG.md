@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Live C2C Blueprint Lines**: Toggleable **C2C Lines** overlay on the Top-Down 1:1 Blueprint showing live millimeter distances between pegs.
+- **Copy Wiki Row (Markdown)**: **Copy Wiki Row** copies a formatted Markdown table row for GitHub Issues or the Wiki `Figure Measurements Database`.
 - **Compact Fit-Test Strip (2 mm)**: **Download Fit-Test Strip (2 mm)** exports a fast `2 mm` rounded-rectangle strip tightly wrapping just the figure's peg holes and clearance.
 - **Per-Figure Base Width Override**: Optional **Base Width Override (mm)** per figure for oversized POP UP PARADE L/SP or wide-stance figures.
 - **Shareable Figure Links (`#fig=...`)**: **Copy Shareable Figure Link** encodes a figure into a URL hash that prompts to import when opened.

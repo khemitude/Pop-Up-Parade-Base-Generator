@@ -1047,6 +1047,36 @@ document.getElementById('btnCopyShareLink').onclick = () => {
   }
 };
 
+document.getElementById('btnCopyMarkdown').onclick = () => {
+  const fig = getActiveFigure();
+  if (!fig) return;
+  syncDistanceToPegs(fig);
+  const enabled = (fig.pegs || []).filter((p) => p.enabled !== false);
+  const dias = enabled.map((p) => `\`${p.diameter}\` (${p.label || 'Peg'})`).join(', ');
+  const shapes = Array.from(new Set(enabled.map((p) => `\`${p.shape || 'round'}\``))).join(', ');
+  const c2cNotes = [];
+  if (enabled.length >= 2) {
+    for (let i = 0; i < enabled.length && enabled.length <= 3; i++) {
+      for (let j = i + 1; j < enabled.length; j++) {
+        const d = Math.hypot((enabled[j].x || 0) - (enabled[i].x || 0), (enabled[j].y || 0) - (enabled[i].y || 0));
+        c2cNotes.push(`P${i + 1}↔P${j + 1}: ${d.toFixed(2)} mm`);
+      }
+    }
+  }
+  const notes = [fig.notes || '', c2cNotes.length ? `C2C: ${c2cNotes.join(', ')}` : ''].filter(Boolean).join(' — ');
+  const row = `| **${fig.name}** | ${fig.group || 'Custom'} | ${enabled.length} | ${dias} | ${shapes} | ${notes} |`;
+  const btn = document.getElementById('btnCopyMarkdown');
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(row).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied Wiki Row ✓';
+      setTimeout(() => { btn.textContent = orig; }, 1600);
+    }).catch(() => prompt('Copy Wiki Markdown row:', row));
+  } else {
+    prompt('Copy Wiki Markdown row:', row);
+  }
+};
+
 renderAll();
 updateHistoryButtons();
 
