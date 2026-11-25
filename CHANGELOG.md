@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-25
+
 ### Added
 - **Built-In Preset Update Prompt**: Added `presetsVersion` tracking in `figures.js` / `app.js` that diffs built-in presets against `localStorage` and shows which specific figures and fields changed before prompting returning users to update (preserving custom figures and Uniform Base Style).
 - **Live C2C Blueprint Lines**: Toggleable **C2C Lines** overlay on the Top-Down 1:1 Blueprint showing live millimeter distances between pegs.
