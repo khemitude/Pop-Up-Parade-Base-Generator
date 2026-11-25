@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Hollow Shell Graduated**: Removed the "Experimental" label from **Hollow Shell (Face-Down Print)** and documented its internal 45° stepped-plinth chamfer for support-free printing.
 - **Default Hole Clearance**: Changed default `clearance` to `0.15 mm` and added UI/documentation warnings against `0.00` clearance without gauge testing or slicer XY hole compensation.
-- **Modular Presets**: Extracted `DEFAULT_CONFIG` into `figures.js`, removed redundant `figures.json`, and updated Nekomata Okayu's peg triangle (`14.00 mm` right-foot c2c, `52.50 mm` left-to-right).
+- **Modular Presets**: Extracted `DEFAULT_CONFIG` into `figures.js`, removed redundant `figures.json`, and updated Nekomata Okayu's peg triangle (`13.98 mm` right-foot c2c, `54.00 mm` left-to-right).
 
 ## [1.0.0] - 2026-11-25
 

@@ -62,13 +62,13 @@ const DEFAULT_CONFIG = {
     },
     {
       id: 'okayu', name: 'Nekomata Okayu', group: 'Hololive Gamers', measured: true,
-      notes: 'Right foot: 14.00mm c2c; 52.50mm from left foot to both right heel and toe pegs.',
-      mode: 'manual', centerOffsetX: 0, centerOffsetY: 0, stanceAngle: 0, pegDistance: 52.5,
+      notes: 'Right foot: 13.98mm c2c; 54.00mm from left foot to both right heel and toe pegs.',
+      mode: 'manual', centerOffsetX: 0, centerOffsetY: 0, stanceAngle: 0, pegDistance: 54,
       facing: 'down',
       pegs: [
-        { label: 'Left Foot', x: -26.02, y: 0, diameter: 6, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
-        { label: 'Right Foot (Heel)', x: 26.02, y: 7, diameter: 5.1, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
-        { label: 'Right Foot (Toe)', x: 26.02, y: -7, diameter: 6.1, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
+        { label: 'Left Foot', x: -27, y: 6.99, diameter: 6, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
+        { label: 'Right Foot (Heel)', x: 27, y: 6.87, diameter: 5.1, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
+        { label: 'Right Foot (Toe)', x: 25.16, y: -6.99, diameter: 6.1, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
       ],
     },
     {
