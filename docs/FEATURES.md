@@ -31,7 +31,7 @@ All settings in **1. Uniform Base Style** apply uniformly across every figure in
 - **Undo / Redo**: Header buttons and keyboard shortcuts (`Ctrl+Z` to Undo, `Ctrl+Y` or `Ctrl+Shift+Z` to Redo).
 - **Reset Defaults / Undo Reset**: Restores the built-in presets, with a one-click **Undo Reset (Restore Previous)** safety net.
 - **Export / Import Config JSON**: Save or restore your entire base style and figure list as a `.json` file.
-- **Fit-Test Strip (2 mm) & Batch ZIP**: **Download Fit-Test Strip (2 mm)** exports a compact `2 mm` rounded-rectangle strip tightly wrapping just the peg holes to test spacing & fit in ~5–8 minutes; **Download All Measured STLs (.zip)** bundles all measured bases into a single `.zip` archive; the header **Gauge** selector exports `1.8–6.2 mm (0.2 mm)`, `3.0–5.0 mm (0.1 mm Fine)`, or `3.6–4.6 mm (0.1 mm Micro)` fit-test gauges.
+- **Fit-Test Strip (2 mm) & Batch ZIP**: **Download Fit-Test Strip (2 mm)** exports a compact `2 mm` rounded-rectangle strip tightly wrapping just the peg holes to test spacing & fit quickly; **Download All Measured STLs (.zip)** bundles all measured bases into a single `.zip` archive; the header **Gauge** selector exports `1.8–6.2 mm (0.2 mm)`, `3.0–5.0 mm (0.1 mm Fine)`, or `3.6–4.6 mm (0.1 mm Micro)` fit-test gauges.
 - **Safety Warnings**: The status bar warns if any peg hole sits within `2 mm` of the top perimeter or if a blind hole leaves less than `0.8 mm` of floor thickness.
 
 ---
