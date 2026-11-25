@@ -123,6 +123,7 @@
         <button id="btnResetPresets">Reset Defaults</button>
         <button id="btnShareFigure" title="Export & copy JSON for only the active figure">Export Figure JSON</button>
         <button id="btnMergeFigures" title="Import and merge figure(s) without overwriting your collection">Merge Figure(s)</button>
+        <button id="btnCopyShareLink" class="col-span-full" title="Copy a shareable URL that imports this figure when opened">Copy Shareable Figure Link</button>
         <input type="file" id="fileMergeFigures" accept=".json" style="display:none" />
         <button id="btnUndoReset" style="grid-column: 1 / -1; display:none;">Undo Reset (Restore Previous)</button>
       </div>
@@ -138,6 +139,7 @@
           </div>
           <div class="row-gap">
             <button class="primary" id="btnDownloadOne">Download STL</button>
+            <button id="btnDownloadTestDisc" title="Export a fast 3 mm flat wafer with the exact peg layout &amp; clearance to test fit before printing the full base">Download Fit-Test Disc (3 mm)</button>
             <button class="ok" id="btnDownloadAll" title="Bundles every figure marked Measured &amp; Verified into one .zip">Download All Measured STLs (.zip)</button>
           </div>
         </div>
@@ -217,6 +219,14 @@
           <span class="hint-muted">Recommended: 0.15–0.20 mm (0 only if gauge-tested)</span>
         </label>
         <input type="number" id="holeClearance" min="0" max="0.8" step="0.05" value="0.20" />
+      </div>
+
+      <div class="field">
+        <label>
+          <span>Base Width Override (mm)</span>
+          <span class="hint-muted">Blank = use Uniform Base Style</span>
+        </label>
+        <input type="number" id="figCustomDiameter" min="45" max="180" step="0.5" placeholder="Use global" />
       </div>
 
       <div id="c2cPanel" class="peg-card" style="display:none;">

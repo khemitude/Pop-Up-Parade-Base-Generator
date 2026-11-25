@@ -244,7 +244,8 @@ function draw3D(tris) {
   gl.enableVertexAttribArray(aNorm);
   gl.vertexAttribPointer(aNorm, 3, gl.FLOAT, false, 24, 12);
 
-  const baseScale = (2.0 / (state.defaults.diameter * 1.45)) * camZoom;
+  const activeDia = (typeof getMeshParams === 'function' ? getMeshParams().diameter : state.defaults.diameter) || 80;
+  const baseScale = (2.0 / (activeDia * 1.45)) * camZoom;
   gl.uniform1f(gl.getUniformLocation(glProg, 'uYaw'), camYaw);
   gl.uniform1f(gl.getUniformLocation(glProg, 'uPitch'), camPitch);
   gl.uniform1f(gl.getUniformLocation(glProg, 'uScale'), baseScale);

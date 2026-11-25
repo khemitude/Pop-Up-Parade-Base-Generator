@@ -201,11 +201,13 @@ function getActiveFigure() {
   return state.figures.find((f) => f.id === activeId) || state.figures[0];
 }
 
-function getMeshParams() {
+function getMeshParams(fig = getActiveFigure()) {
   const d = state.defaults;
   const shapeVal = d.shape === 'hexagon_pointy' ? 'hexagon' : d.shape;
+  const overrideDia = fig && Number(fig.customDiameter) > 0 ? Number(fig.customDiameter) : null;
   return {
     ...d,
+    diameter: overrideDia || d.diameter,
     chamfer: d.chamferEnabled ? (Number(d.chamfer) || 0) : 0,
     shape: shapeVal,
     hexPointy: d.shape === 'hexagon_pointy',
@@ -315,6 +317,7 @@ function renderPegControls() {
   document.getElementById('activeFigNotes').textContent = fig.notes || '';
   document.getElementById('figMeasured').checked = Boolean(fig.measured);
   document.getElementById('figFacing').value = fig.facing || 'down';
+  document.getElementById('figCustomDiameter').value = fig.customDiameter > 0 ? fig.customDiameter : '';
 
   document.getElementById('modeDistance').className = fig.mode === 'distance' ? 'active' : '';
   document.getElementById('modeManual').className = fig.mode === 'manual' ? 'active' : '';
@@ -523,6 +526,18 @@ function renderAll() {
     rebuildAndDraw();
   };
 });
+
+document.getElementById('figCustomDiameter').oninput = (e) => {
+  const fig = getActiveFigure();
+  const val = Number(e.target.value);
+  if (val > 0) {
+    fig.customDiameter = val;
+  } else {
+    delete fig.customDiameter;
+  }
+  saveState();
+  rebuildAndDraw();
+};
 
 document.getElementById('figMeasured').onchange = (e) => {
   getActiveFigure().measured = e.target.checked;
@@ -746,8 +761,33 @@ document.getElementById('btnResetFigure').onclick = () => {
 document.getElementById('btnDownloadOne').onclick = () => {
   if (!currentTris.length) return;
   const fig = getActiveFigure();
+  const params = getMeshParams(fig);
   const stl = PUPMesh.trianglesToBinarySTL(currentTris, `PUP Base - ${fig.name}`);
-  downloadBytes(stl, `pup_base_${fig.id}_${state.defaults.shape}_${state.defaults.diameter}mm.stl`);
+  downloadBytes(stl, `pup_base_${fig.id}_${state.defaults.shape}_${params.diameter}mm.stl`);
+};
+
+document.getElementById('btnDownloadTestDisc').onclick = () => {
+  const fig = getActiveFigure();
+  if (!fig) return;
+  syncDistanceToPegs(fig);
+  const baseParams = getMeshParams(fig);
+  const testParams = {
+    ...baseParams,
+    height: 3,
+    hollow: false,
+    stepped: false,
+    chamferEnabled: false,
+    chamfer: 0,
+    magnetPocket: false,
+    stampName: false,
+  };
+  try {
+    const tris = PUPMesh.buildBaseMesh(testParams, fig);
+    const stl = PUPMesh.trianglesToBinarySTL(tris, `PUP Fit-Test Disc 3mm - ${fig.name}`);
+    downloadBytes(stl, `pup_fit_test_${fig.id}_${testParams.diameter}mm_3mm.stl`);
+  } catch (err) {
+    alert('Could not generate Fit-Test Disc: ' + err.message);
+  }
 };
 
 function createZipBytes(entries) {
@@ -823,15 +863,15 @@ function createZipBytes(entries) {
 }
 
 document.getElementById('btnDownloadAll').onclick = () => {
-  const params = getMeshParams();
   const targets = state.figures.filter((f) => f.measured);
   const list = targets.length ? targets : state.figures;
   const entries = list.map((fig) => {
     syncDistanceToPegs(fig);
+    const params = getMeshParams(fig);
     const tris = PUPMesh.buildBaseMesh(params, fig);
     const stl = PUPMesh.trianglesToBinarySTL(tris, `PUP Base - ${fig.name}`);
     return {
-      name: `pup_base_${fig.id}_${state.defaults.shape}_${state.defaults.diameter}mm.stl`,
+      name: `pup_base_${fig.id}_${state.defaults.shape}_${params.diameter}mm.stl`,
       data: stl,
     };
   });
@@ -939,6 +979,44 @@ document.getElementById('btnModalExportLBracket').onclick = () => {
 };
 
 // --- Initialization & Global Shortcuts ---
+(function importSharedFigureFromHash() {
+  const hash = window.location.hash || '';
+  if (!hash.startsWith('#fig=')) return;
+  try {
+    const b64 = hash.slice(5);
+    const json = decodeURIComponent(escape(atob(b64)));
+    const parsed = JSON.parse(json);
+    if (!parsed || !parsed.name || !Array.isArray(parsed.pegs)) return;
+    if (!confirm(`Import shared figure "${parsed.name}" into your collection?`)) return;
+    let newId = parsed.id || parsed.name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+    if (state.figures.some((f) => f.id === newId)) {
+      newId = `${newId}_${Date.now().toString().slice(-4)}`;
+    }
+    parsed.id = newId;
+    state.figures.push(parsed);
+    activeId = newId;
+    saveState();
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  } catch (e) {}
+})();
+
+document.getElementById('btnCopyShareLink').onclick = () => {
+  const fig = getActiveFigure();
+  if (!fig) return;
+  const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(fig))));
+  const url = `${window.location.href.split('#')[0]}#fig=${b64}`;
+  const btn = document.getElementById('btnCopyShareLink');
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(url).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied Share Link ✓';
+      setTimeout(() => { btn.textContent = orig; }, 1600);
+    }).catch(() => prompt('Copy shareable figure link:', url));
+  } else {
+    prompt('Copy shareable figure link:', url);
+  }
+};
+
 renderAll();
 updateHistoryButtons();
 

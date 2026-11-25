@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Thin Fit-Test Disc (3 mm)**: **Download Fit-Test Disc (3 mm)** exports a fast flat `3 mm` prototype wafer with the figure's exact peg layout and clearance.
+- **Per-Figure Base Width Override**: Optional **Base Width Override (mm)** per figure for oversized POP UP PARADE L/SP or wide-stance figures.
+- **Shareable Figure Links (`#fig=...`)**: **Copy Shareable Figure Link** encodes a figure into a URL hash that prompts to import when opened.
 - **Center-to-Center (C2C) Pin Solver**: Live `P1 ↔ P2`, `P1 ↔ P3`, and `P2 ↔ P3` distance readout and trilateration solver (**Apply C2C → X / Y** with **Flip** toggle) for 2- and 3-peg caliper measurements.
 - **Workflow Hints**: Added concise UI hints for global base settings, browser auto-save/backups, caliper-vs-photo entry, and `.zip` batch export filtering.
 - **Figure Search Box**: Filter figures in **2. Your Figures** in real time by name, group, or notes.

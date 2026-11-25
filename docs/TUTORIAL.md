@@ -96,8 +96,8 @@ In **1. Uniform Base Style** (left panel), configure the shared look for all you
 
 ## Step 6: Export STL & 3D Print
 
-1. Click **Download STL** to export the active figure's base, or **Download All Measured STLs (.zip)** to batch-export every figure marked as measured into a single `.zip` file.
+1. Click **Download Fit-Test Disc (3 mm)** first if you want a ~10-minute flat test wafer to verify pin spacing and fit before printing the full plinth, **Download STL** for the active figure's full base, or **Download All Measured STLs (.zip)** to batch-export every figure marked as measured into a single `.zip` file.
 2. **Slicing Tips**:
    - **Solid / Stepped Bases**: Print right-side up (flat bottom on the build plate). `0.16–0.20 mm` layer height, `15–20%` gyroid infill, 3–4 walls. No supports needed.
    - **Hollow Shell Bases**: Print **face-down** (top display surface on the build plate) for a smooth textured/PEI top finish.
-3. **Backup & Share**: Click **Export Config JSON** in the header to back up your entire collection, or use **Export Figure JSON** / **Merge Figure(s)** under **2. Your Figures** to share or import individual figures.
+3. **Backup & Share**: Click **Export Config JSON** in the header to back up your entire collection, or use **Export Figure JSON**, **Copy Shareable Figure Link**, and **Merge Figure(s)** under **2. Your Figures** to share or import individual figures.
