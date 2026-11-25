@@ -56,6 +56,7 @@ Requires **Node.js** (tested on v22).
 
 - **[Step-by-Step Tutorial](docs/TUTORIAL.md)** — How to print the test gauge and calibration frame, measure a figure with or without calipers, customize your uniform base, and export for 3D printing.
 - **[Features & Reference Guide](docs/FEATURES.md)** — Detailed breakdown of every UI control, peg shape, calibration mode, keyboard shortcut, and the `PUPMesh` API.
+- **[Project Wiki](https://github.com/khemitude/Pop-Up-Parade-Base-Generator/wiki)** — Community Figure Measurements Database, 3D Printing & Slicing Guide, and FAQ.
 
 ---
 
@@ -63,10 +64,19 @@ Requires **Node.js** (tested on v22).
 
 | File | Description |
 | :--- | :--- |
-| [`index.html`](index.html) | Complete web UI, 3D/2D canvas renderers, Photo Peg Measurer, and state management |
+| [`index.html`](index.html) | Main HTML layout and Photo Peg Measurer modal markup |
+| [`styles.css`](styles.css) | Application, modal, and utility styles |
+| [`app.js`](app.js) | State management, presets, undo/redo, form controls, and STL/JSON export |
+| [`preview.js`](preview.js) | 2D 1:1 blueprint renderer, 3D WebGL preview, and canvas drag/rotate interactions |
+| [`photo-measurer.js`](photo-measurer.js) | Photo Peg Measurer UI, perspective homography math, and canvas tools |
+| [`photo-detect.js`](photo-detect.js) | Computer-vision auto-detectors for calibration frames, L-brackets, hex bases, and base holes |
 | [`mesh.js`](mesh.js) | Parametric 3D mesh & binary STL generator (`PUPMesh`, works in browser & Node.js) |
 | [`figures.json`](figures.json) | Default base configuration and pre-measured figure presets |
-| [`verify_mesh.js`](verify_mesh.js) | Node.js watertight manifold test suite & utility STL generator |
-| `pup_peg_fit_test_gauge_*.stl` | Pre-generated peg-fit test gauges (e.g., 1.8–6.2 mm in 0.2 mm steps) |
+| [`verify_mesh.js`](verify_mesh.js) | Node.js watertight manifold test suite & utility STL generator (`npm test`) |
+| [`docs/`](docs/) | Tutorial ([`TUTORIAL.md`](docs/TUTORIAL.md)) and reference guide ([`FEATURES.md`](docs/FEATURES.md)) |
+| [`CHANGELOG.md`](CHANGELOG.md) | Release history (SemVer) |
+| [`package.json`](package.json) | Project metadata, version, keywords, and `npm test` script |
+| [`LICENSE`](LICENSE) | MIT License |
+| `pup_peg_fit_test_gauge_*.stl` | Pre-generated peg-fit test gauge (1.8–6.2 mm in 0.2 mm steps) |
 | `pup_photo_calibration_frame_70mm.stl` | 70×70 mm square calibration frame for perspective-corrected photo measurements |
 | `pup_photo_calibration_l_bracket_70mm.stl` | 70×70 mm 3-corner L-bracket calibration reference for figures that don't fit inside a closed frame |
