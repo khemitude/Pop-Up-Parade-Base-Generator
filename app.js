@@ -229,8 +229,25 @@ function syncDistanceToPegs(fig) {
 function renderFigureList() {
   const list = document.getElementById('figureList');
   list.innerHTML = '';
+  const query = (document.getElementById('figureSearch')?.value || '').trim().toLowerCase();
   const canDelete = state.figures.length > 1;
-  state.figures.forEach((fig, idx) => {
+  const matches = state.figures
+    .map((fig, idx) => ({ fig, idx }))
+    .filter(({ fig }) => {
+      if (!query) return true;
+      const hay = `${fig.name || ''} ${fig.group || ''} ${fig.notes || ''}`.toLowerCase();
+      return hay.includes(query);
+    });
+
+  if (!matches.length) {
+    const empty = document.createElement('div');
+    empty.className = 'muted-sm';
+    empty.textContent = `No figures match "${document.getElementById('figureSearch').value.trim()}".`;
+    list.appendChild(empty);
+    return;
+  }
+
+  matches.forEach(({ fig, idx }) => {
     const div = document.createElement('div');
     div.className = 'fig-item' + (fig.id === activeId ? ' active' : '');
     div.innerHTML = `
@@ -522,9 +539,13 @@ document.getElementById('btnAddFigure').onclick = () => {
     ]
   });
   activeId = id;
+  const searchEl = document.getElementById('figureSearch');
+  if (searchEl) searchEl.value = '';
   saveState();
   renderAll();
 };
+
+document.getElementById('figureSearch').oninput = () => renderFigureList();
 
 const BACKUP_KEY = STORAGE_KEY + '_backup';
 function updateUndoResetBtn() {
