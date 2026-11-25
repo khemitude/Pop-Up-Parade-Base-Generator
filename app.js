@@ -62,11 +62,51 @@ function performRedo() {
 }
 
 function loadState() {
+  let loaded = null;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) loaded = JSON.parse(raw);
   } catch (e) {}
-  return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  if (!loaded) {
+    return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  }
+
+  const latestVer = DEFAULT_CONFIG.presetsVersion || 1;
+  if ((loaded.presetsVersion || 1) < latestVer) {
+    const oldById = new Map((loaded.figures || []).map((f) => [f.id, f]));
+    const changes = [];
+    for (const df of DEFAULT_CONFIG.figures) {
+      const oldF = oldById.get(df.id);
+      if (!oldF) {
+        changes.push(`• ${df.name}: new built-in preset`);
+        continue;
+      }
+      const details = [];
+      if (JSON.stringify(oldF.pegs) !== JSON.stringify(df.pegs)) details.push('peg layout / sizes');
+      if ((oldF.facing || 'down') !== (df.facing || 'down')) details.push(`facing (${oldF.facing || 'down'} → ${df.facing || 'down'})`);
+      if ((oldF.notes || '') !== (df.notes || '')) details.push('notes');
+      if (details.length) changes.push(`• ${df.name}: ${details.join(', ')}`);
+    }
+
+    if (changes.length) {
+      const applyUpdates = confirm(
+        'Updated built-in figure presets are available:\n\n' +
+        changes.join('\n') +
+        '\n\nClick OK to apply these updates while keeping your custom figures and Uniform Base Style.\n' +
+        '(Note: Double-check if you previously changed any of the built-in figures above—updating will overwrite your local edits to them.)'
+      );
+      if (applyUpdates) {
+        try {
+          localStorage.setItem(STORAGE_KEY + '_backup', JSON.stringify({ state: loaded, activeId: loaded.figures?.[0]?.id }));
+        } catch (e) {}
+        const customFigs = (loaded.figures || []).filter((f) => !DEFAULT_CONFIG.figures.some((df) => df.id === f.id));
+        loaded.figures = [...JSON.parse(JSON.stringify(DEFAULT_CONFIG.figures)), ...customFigs];
+      }
+    }
+    loaded.presetsVersion = latestVer;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded)); } catch (e) {}
+  }
+  return loaded;
 }
 
 function saveState() {
@@ -201,11 +241,13 @@ function getActiveFigure() {
   return state.figures.find((f) => f.id === activeId) || state.figures[0];
 }
 
-function getMeshParams() {
+function getMeshParams(fig = getActiveFigure()) {
   const d = state.defaults;
   const shapeVal = d.shape === 'hexagon_pointy' ? 'hexagon' : d.shape;
+  const overrideDia = fig && Number(fig.customDiameter) > 0 ? Number(fig.customDiameter) : null;
   return {
     ...d,
+    diameter: overrideDia || d.diameter,
     chamfer: d.chamferEnabled ? (Number(d.chamfer) || 0) : 0,
     shape: shapeVal,
     hexPointy: d.shape === 'hexagon_pointy',
@@ -229,8 +271,25 @@ function syncDistanceToPegs(fig) {
 function renderFigureList() {
   const list = document.getElementById('figureList');
   list.innerHTML = '';
+  const query = (document.getElementById('figureSearch')?.value || '').trim().toLowerCase();
   const canDelete = state.figures.length > 1;
-  state.figures.forEach((fig, idx) => {
+  const matches = state.figures
+    .map((fig, idx) => ({ fig, idx }))
+    .filter(({ fig }) => {
+      if (!query) return true;
+      const hay = `${fig.name || ''} ${fig.group || ''} ${fig.notes || ''}`.toLowerCase();
+      return hay.includes(query);
+    });
+
+  if (!matches.length) {
+    const empty = document.createElement('div');
+    empty.className = 'muted-sm';
+    empty.textContent = `No figures match "${document.getElementById('figureSearch').value.trim()}".`;
+    list.appendChild(empty);
+    return;
+  }
+
+  matches.forEach(({ fig, idx }) => {
     const div = document.createElement('div');
     div.className = 'fig-item' + (fig.id === activeId ? ' active' : '');
     div.innerHTML = `
@@ -281,6 +340,8 @@ function renderBaseControls() {
   document.getElementById('stepHeight').value = d.stepHeight;
   document.getElementById('magnetPocket').checked = d.magnetPocket;
   document.getElementById('baseHollow').checked = Boolean(d.hollow);
+  document.getElementById('baseStampName').checked = Boolean(d.stampName);
+  document.getElementById('stampNameWrap').style.display = d.hollow ? '' : 'none';
   document.getElementById('magnetDiameter').value = d.magnetDiameter;
   document.getElementById('magnetDepth').value = d.magnetDepth;
 
@@ -296,6 +357,7 @@ function renderPegControls() {
   document.getElementById('activeFigNotes').textContent = fig.notes || '';
   document.getElementById('figMeasured').checked = Boolean(fig.measured);
   document.getElementById('figFacing').value = fig.facing || 'down';
+  document.getElementById('figCustomDiameter').value = fig.customDiameter > 0 ? fig.customDiameter : '';
 
   document.getElementById('modeDistance').className = fig.mode === 'distance' ? 'active' : '';
   document.getElementById('modeManual').className = fig.mode === 'manual' ? 'active' : '';
@@ -305,6 +367,29 @@ function renderPegControls() {
   document.getElementById('stanceAngle').value = fig.stanceAngle ?? 0;
   document.getElementById('centerOffsetX').value = fig.centerOffsetX ?? 0;
   document.getElementById('centerOffsetY').value = fig.centerOffsetY ?? 0;
+
+  // Center-to-center distance readout & solver inputs
+  const c2cPanel = document.getElementById('c2cPanel');
+  if (c2cPanel) {
+    if (fig.pegs.length >= 2) {
+      c2cPanel.style.display = '';
+      const p1 = fig.pegs[0], p2 = fig.pegs[1];
+      document.getElementById('c2c12').value = Math.hypot((p2.x || 0) - (p1.x || 0), (p2.y || 0) - (p1.y || 0)).toFixed(2);
+      const has3 = fig.pegs.length >= 3;
+      document.getElementById('c2c13Wrap').style.display = has3 ? '' : 'none';
+      document.getElementById('c2c23Wrap').style.display = has3 ? '' : 'none';
+      document.getElementById('c2cFlipWrap').style.display = has3 ? '' : 'none';
+      if (has3) {
+        const p3 = fig.pegs[2];
+        document.getElementById('c2c13').value = Math.hypot((p3.x || 0) - (p1.x || 0), (p3.y || 0) - (p1.y || 0)).toFixed(2);
+        document.getElementById('c2c23').value = Math.hypot((p3.x || 0) - (p2.x || 0), (p3.y || 0) - (p2.y || 0)).toFixed(2);
+      }
+      const errEl = document.getElementById('c2cError');
+      if (errEl) errEl.style.display = 'none';
+    } else {
+      c2cPanel.style.display = 'none';
+    }
+  }
 
   const container = document.getElementById('pegsContainer');
   container.innerHTML = '';
@@ -399,8 +484,27 @@ function rebuildAndDraw() {
 
   try {
     currentTris = PUPMesh.buildBaseMesh(params, fig);
-    bar.className = 'status-bar ok';
-    bar.textContent = `Mesh ready — ${currentTris.length} triangles, watertight manifold STL (${params.diameter} mm ${state.defaults.shape}).`;
+    const warnings = [];
+    const activePegs = (fig.pegs || []).filter((p) => p.enabled !== false);
+    const maxSafeR = params.diameter / 2 - (params.stepped ? (Number(params.stepInset) || 0) : 0) - (params.chamfer || 0);
+    activePegs.forEach((p, idx) => {
+      const holeR = ((Number(p.diameter) || 4) + (params.clearance || 0)) / 2;
+      const distFromCenter = Math.hypot(Number(p.x) || 0, Number(p.y) || 0);
+      if (distFromCenter + holeR > maxSafeR - 2.0) {
+        warnings.push(`P${idx + 1} is within 2 mm of the top edge`);
+      }
+      const isThrough = p.shape === 'round' && Boolean(p.through);
+      if (!isThrough && (Number(p.depth) || 0) >= params.height - 0.8) {
+        warnings.push(`P${idx + 1} depth (${p.depth} mm) leaves <0.8 mm floor (height ${params.height} mm)`);
+      }
+    });
+    if (warnings.length) {
+      bar.className = 'status-bar warn';
+      bar.textContent = `Watertight (${currentTris.length} tris) — Warning: ${warnings.join('; ')}.`;
+    } else {
+      bar.className = 'status-bar ok';
+      bar.textContent = `Mesh ready — ${currentTris.length} triangles, watertight manifold STL (${params.diameter} mm ${state.defaults.shape}).`;
+    }
   } catch (err) {
     currentTris = [];
     bar.className = 'status-bar warn';
@@ -430,7 +534,7 @@ function renderAll() {
 }
 
 // --- Event Listeners ---
-['baseShape', 'baseDiameter', 'baseHeight', 'baseChamferEnabled', 'baseChamfer', 'holeClearance', 'baseStepped', 'stepInset', 'stepHeight', 'magnetPocket', 'magnetDiameter', 'magnetDepth', 'baseHollow'].forEach((id) => {
+['baseShape', 'baseDiameter', 'baseHeight', 'baseChamferEnabled', 'baseChamfer', 'holeClearance', 'baseStepped', 'stepInset', 'stepHeight', 'magnetPocket', 'magnetDiameter', 'magnetDepth', 'baseHollow', 'baseStampName'].forEach((id) => {
   const el = document.getElementById(id);
   el.onchange = el.oninput = () => {
     const d = state.defaults;
@@ -455,12 +559,25 @@ function renderAll() {
     else if (id === 'stepHeight') d.stepHeight = Number(el.value);
     else if (id === 'magnetPocket') { d.magnetPocket = el.checked; renderBaseControls(); }
     else if (id === 'baseHollow') { d.hollow = el.checked; renderBaseControls(); }
+    else if (id === 'baseStampName') d.stampName = el.checked;
     else if (id === 'magnetDiameter') d.magnetDiameter = Number(el.value);
     else if (id === 'magnetDepth') d.magnetDepth = Number(el.value);
     saveState();
     rebuildAndDraw();
   };
 });
+
+document.getElementById('figCustomDiameter').oninput = (e) => {
+  const fig = getActiveFigure();
+  const val = Number(e.target.value);
+  if (val > 0) {
+    fig.customDiameter = val;
+  } else {
+    delete fig.customDiameter;
+  }
+  saveState();
+  rebuildAndDraw();
+};
 
 document.getElementById('figMeasured').onchange = (e) => {
   getActiveFigure().measured = e.target.checked;
@@ -501,6 +618,56 @@ document.getElementById('modeManual').onclick = () => {
   };
 });
 
+document.getElementById('btnApplyC2C').onclick = () => {
+  const fig = getActiveFigure();
+  if (!fig || fig.pegs.length < 2) return;
+  const errEl = document.getElementById('c2cError');
+  const showErr = (msg) => {
+    errEl.textContent = msg;
+    errEl.style.display = '';
+  };
+  errEl.style.display = 'none';
+
+  const d12 = Number(document.getElementById('c2c12').value);
+  if (!(d12 > 0)) return showErr('P1 ↔ P2 must be greater than 0 mm.');
+
+  if (fig.pegs.length === 2) {
+    if (fig.mode === 'distance') {
+      fig.pegDistance = Number(d12.toFixed(2));
+      syncDistanceToPegs(fig);
+    } else {
+      fig.pegs[0].x = Number((-d12 / 2).toFixed(2));
+      fig.pegs[0].y = 0;
+      fig.pegs[1].x = Number((d12 / 2).toFixed(2));
+      fig.pegs[1].y = 0;
+    }
+  } else {
+    const d13 = Number(document.getElementById('c2c13').value);
+    const d23 = Number(document.getElementById('c2c23').value);
+    if (!(d13 > 0) || !(d23 > 0)) return showErr('All three distances must be greater than 0 mm.');
+    if (d12 + d13 <= d23 || d12 + d23 <= d13 || d13 + d23 <= d12) {
+      return showErr('Invalid triangle: each side must be shorter than the sum of the other two.');
+    }
+    const flip = document.getElementById('c2cFlip').checked;
+    const x3 = (d12 * d12 + d13 * d13 - d23 * d23) / (2 * d12);
+    const y3 = (flip ? -1 : 1) * Math.sqrt(Math.max(0, d13 * d13 - x3 * x3));
+
+    fig.mode = 'manual';
+    fig.pegs[0].x = 0;
+    fig.pegs[0].y = 0;
+    fig.pegs[1].x = Number(d12.toFixed(2));
+    fig.pegs[1].y = 0;
+    fig.pegs[2].x = Number(x3.toFixed(2));
+    fig.pegs[2].y = Number(y3.toFixed(2));
+    fitPegGroupInsideBase(fig);
+    refreshAutoLabelsIfStandard(fig);
+  }
+
+  saveState();
+  renderPegControls();
+  rebuildAndDraw();
+};
+
 document.getElementById('btnAddPeg').onclick = () => {
   const fig = getActiveFigure();
   fig.pegs.push({ label: 'Support / Peg ' + (fig.pegs.length + 1), x: 0, y: -15, diameter: 3.5, depth: 10.0, shape: 'hexagon', flatAngle: 0, enabled: true });
@@ -522,9 +689,13 @@ document.getElementById('btnAddFigure').onclick = () => {
     ]
   });
   activeId = id;
+  const searchEl = document.getElementById('figureSearch');
+  if (searchEl) searchEl.value = '';
   saveState();
   renderAll();
 };
+
+document.getElementById('figureSearch').oninput = () => renderFigureList();
 
 const BACKUP_KEY = STORAGE_KEY + '_backup';
 function updateUndoResetBtn() {
@@ -630,28 +801,211 @@ document.getElementById('btnResetFigure').onclick = () => {
 document.getElementById('btnDownloadOne').onclick = () => {
   if (!currentTris.length) return;
   const fig = getActiveFigure();
+  const params = getMeshParams(fig);
   const stl = PUPMesh.trianglesToBinarySTL(currentTris, `PUP Base - ${fig.name}`);
-  downloadBytes(stl, `pup_base_${fig.id}_${state.defaults.shape}_${state.defaults.diameter}mm.stl`);
+  downloadBytes(stl, `pup_base_${fig.id}_${state.defaults.shape}_${params.diameter}mm.stl`);
 };
 
+document.getElementById('btnDownloadTestDisc').onclick = () => {
+  const fig = getActiveFigure();
+  if (!fig) return;
+  syncDistanceToPegs(fig);
+  const baseParams = getMeshParams(fig);
+  const clearance = baseParams.clearance || 0;
+  const enabled = (fig.pegs || []).filter((p) => p.enabled !== false);
+  if (!enabled.length) return;
+
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const p of enabled) {
+    const r = ((Number(p.diameter) || 4) + clearance) / 2;
+    const x = Number(p.x) || 0;
+    const y = Number(p.y) || 0;
+    if (x - r < minX) minX = x - r;
+    if (x + r > maxX) maxX = x + r;
+    if (y - r < minY) minY = y - r;
+    if (y + r > maxY) maxY = y + r;
+  }
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  const stripW = Number(Math.max(24, (maxX - minX) + 10).toFixed(1));
+  const stripD = Number(Math.max(18, (maxY - minY) + 10).toFixed(1));
+  const shiftedFig = {
+    ...fig,
+    pegs: enabled.map((p) => ({
+      ...p,
+      x: Number(((Number(p.x) || 0) - cx).toFixed(2)),
+      y: Number(((Number(p.y) || 0) - cy).toFixed(2)),
+    })),
+  };
+  const testParams = {
+    ...baseParams,
+    shape: 'rounded_rect',
+    diameter: stripW,
+    depth: stripD,
+    cornerRadius: Math.min(5, Math.min(stripW, stripD) * 0.25),
+    height: 2.0,
+    hollow: false,
+    stepped: false,
+    chamferEnabled: false,
+    chamfer: 0,
+    magnetPocket: false,
+    stampName: false,
+  };
+  try {
+    const tris = PUPMesh.buildBaseMesh(testParams, shiftedFig);
+    const stl = PUPMesh.trianglesToBinarySTL(tris, `PUP Fit-Test Strip 2mm - ${fig.name}`);
+    downloadBytes(stl, `pup_fit_test_${fig.id}_${stripW}x${stripD}mm_2mm.stl`);
+  } catch (err) {
+    alert('Could not generate Fit-Test Strip: ' + err.message);
+  }
+};
+
+function createZipBytes(entries) {
+  const crcTable = new Uint32Array(256);
+  for (let i = 0; i < 256; i++) {
+    let c = i;
+    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+    crcTable[i] = c >>> 0;
+  }
+  const crc32 = (bytes) => {
+    let c = 0xffffffff;
+    for (let i = 0; i < bytes.length; i++) c = crcTable[(c ^ bytes[i]) & 0xff] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  };
+  const enc = new TextEncoder();
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+
+  for (const { name, data } of entries) {
+    const nameBytes = enc.encode(name);
+    const crc = crc32(data);
+    const size = data.length;
+
+    const local = new Uint8Array(30 + nameBytes.length + size);
+    const lv = new DataView(local.buffer);
+    lv.setUint32(0, 0x04034b50, true);
+    lv.setUint16(4, 20, true);
+    lv.setUint16(6, 0x0800, true);
+    lv.setUint16(8, 0, true);
+    lv.setUint32(14, crc, true);
+    lv.setUint32(18, size, true);
+    lv.setUint32(22, size, true);
+    lv.setUint16(26, nameBytes.length, true);
+    local.set(nameBytes, 30);
+    local.set(data, 30 + nameBytes.length);
+    localParts.push(local);
+
+    const central = new Uint8Array(46 + nameBytes.length);
+    const cv = new DataView(central.buffer);
+    cv.setUint32(0, 0x02014b50, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0x0800, true);
+    cv.setUint16(10, 0, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, size, true);
+    cv.setUint32(24, size, true);
+    cv.setUint16(28, nameBytes.length, true);
+    cv.setUint32(42, offset, true);
+    central.set(nameBytes, 46);
+    centralParts.push(central);
+
+    offset += local.length;
+  }
+
+  const centralSize = centralParts.reduce((s, p) => s + p.length, 0);
+  const eocd = new Uint8Array(22);
+  const ev = new DataView(eocd.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, entries.length, true);
+  ev.setUint16(10, entries.length, true);
+  ev.setUint32(12, centralSize, true);
+  ev.setUint32(16, offset, true);
+
+  const total = offset + centralSize + eocd.length;
+  const out = new Uint8Array(total);
+  let pos = 0;
+  for (const p of localParts) { out.set(p, pos); pos += p.length; }
+  for (const p of centralParts) { out.set(p, pos); pos += p.length; }
+  out.set(eocd, pos);
+  return out;
+}
+
 document.getElementById('btnDownloadAll').onclick = () => {
-  const params = getMeshParams();
   const targets = state.figures.filter((f) => f.measured);
   const list = targets.length ? targets : state.figures;
-  list.forEach((fig, idx) => {
-    setTimeout(() => {
-      syncDistanceToPegs(fig);
-      const tris = PUPMesh.buildBaseMesh(params, fig);
-      const stl = PUPMesh.trianglesToBinarySTL(tris, `PUP Base - ${fig.name}`);
-      downloadBytes(stl, `pup_base_${fig.id}_${state.defaults.shape}_${state.defaults.diameter}mm.stl`);
-    }, idx * 250);
+  const entries = list.map((fig) => {
+    syncDistanceToPegs(fig);
+    const params = getMeshParams(fig);
+    const tris = PUPMesh.buildBaseMesh(params, fig);
+    const stl = PUPMesh.trianglesToBinarySTL(tris, `PUP Base - ${fig.name}`);
+    return {
+      name: `pup_base_${fig.id}_${state.defaults.shape}_${params.diameter}mm.stl`,
+      data: stl,
+    };
   });
+  const zipBytes = createZipBytes(entries);
+  downloadBytes(zipBytes, `pup_bases_${state.defaults.shape}_${state.defaults.diameter}mm.zip`);
 };
 
 document.getElementById('btnExportGauge').onclick = () => {
-  const tris = PUPMesh.buildTestGaugeMesh(1.8, 0.2, 23);
-  const stl = PUPMesh.trianglesToBinarySTL(tris, 'PUP Peg-Fit Test Gauge 1.8-6.2mm (0.2mm step)');
-  downloadBytes(stl, 'pup_peg_fit_test_gauge_1.8_to_6.2mm.stl');
+  const preset = document.getElementById('gaugePreset')?.value || 'standard';
+  const cfg = preset === 'fine'
+    ? { start: 3.0, step: 0.1, count: 21, label: '3.0-5.0mm (0.1mm step)', file: 'pup_peg_fit_test_gauge_3.0_to_5.0mm_fine.stl' }
+    : preset === 'micro'
+      ? { start: 3.6, step: 0.1, count: 11, label: '3.6-4.6mm (0.1mm step)', file: 'pup_peg_fit_test_gauge_3.6_to_4.6mm_micro.stl' }
+      : { start: 1.8, step: 0.2, count: 23, label: '1.8-6.2mm (0.2mm step)', file: 'pup_peg_fit_test_gauge_1.8_to_6.2mm.stl' };
+  const tris = PUPMesh.buildTestGaugeMesh(cfg.start, cfg.step, cfg.count);
+  const stl = PUPMesh.trianglesToBinarySTL(tris, `PUP Peg-Fit Test Gauge ${cfg.label}`);
+  downloadBytes(stl, cfg.file);
+};
+
+document.getElementById('btnShareFigure').onclick = () => {
+  const fig = getActiveFigure();
+  if (!fig) return;
+  const json = JSON.stringify(fig, null, 2);
+  downloadBytes(new TextEncoder().encode(json), `pup_figure_${fig.id}.json`);
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(json).catch(() => {});
+  }
+};
+
+document.getElementById('btnMergeFigures').onclick = () => document.getElementById('fileMergeFigures').click();
+document.getElementById('fileMergeFigures').onchange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      const incoming = Array.isArray(parsed?.figures)
+        ? parsed.figures
+        : (parsed && parsed.pegs && parsed.name ? [parsed] : null);
+      if (!incoming || !incoming.length) throw new Error('Invalid figure JSON');
+
+      commitHistoryNow();
+      let firstAddedId = null;
+      for (const item of incoming) {
+        const clone = JSON.parse(JSON.stringify(item));
+        let newId = clone.id || clone.name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+        if (state.figures.some((f) => f.id === newId)) {
+          newId = `${newId}_${Date.now().toString().slice(-4)}`;
+        }
+        clone.id = newId;
+        state.figures.push(clone);
+        if (!firstAddedId) firstAddedId = newId;
+      }
+      if (firstAddedId) activeId = firstAddedId;
+      saveState();
+      commitHistoryNow();
+      renderAll();
+    } catch (err) {
+      alert('Invalid figure JSON file.');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
 };
 
 document.getElementById('btnExportJson').onclick = () => {
@@ -695,6 +1049,74 @@ document.getElementById('btnModalExportLBracket').onclick = () => {
 };
 
 // --- Initialization & Global Shortcuts ---
+(function importSharedFigureFromHash() {
+  const hash = window.location.hash || '';
+  if (!hash.startsWith('#fig=')) return;
+  try {
+    const b64 = hash.slice(5);
+    const json = decodeURIComponent(escape(atob(b64)));
+    const parsed = JSON.parse(json);
+    if (!parsed || !parsed.name || !Array.isArray(parsed.pegs)) return;
+    if (!confirm(`Import shared figure "${parsed.name}" into your collection?`)) return;
+    let newId = parsed.id || parsed.name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+    if (state.figures.some((f) => f.id === newId)) {
+      newId = `${newId}_${Date.now().toString().slice(-4)}`;
+    }
+    parsed.id = newId;
+    state.figures.push(parsed);
+    activeId = newId;
+    saveState();
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  } catch (e) {}
+})();
+
+document.getElementById('btnCopyShareLink').onclick = () => {
+  const fig = getActiveFigure();
+  if (!fig) return;
+  const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(fig))));
+  const url = `${window.location.href.split('#')[0]}#fig=${b64}`;
+  const btn = document.getElementById('btnCopyShareLink');
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(url).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied Share Link ✓';
+      setTimeout(() => { btn.textContent = orig; }, 1600);
+    }).catch(() => prompt('Copy shareable figure link:', url));
+  } else {
+    prompt('Copy shareable figure link:', url);
+  }
+};
+
+document.getElementById('btnCopyMarkdown').onclick = () => {
+  const fig = getActiveFigure();
+  if (!fig) return;
+  syncDistanceToPegs(fig);
+  const enabled = (fig.pegs || []).filter((p) => p.enabled !== false);
+  const dias = enabled.map((p) => `\`${p.diameter}\` (${p.label || 'Peg'})`).join(', ');
+  const shapes = Array.from(new Set(enabled.map((p) => `\`${p.shape || 'round'}\``))).join(', ');
+  const c2cNotes = [];
+  if (enabled.length >= 2) {
+    for (let i = 0; i < enabled.length && enabled.length <= 3; i++) {
+      for (let j = i + 1; j < enabled.length; j++) {
+        const d = Math.hypot((enabled[j].x || 0) - (enabled[i].x || 0), (enabled[j].y || 0) - (enabled[i].y || 0));
+        c2cNotes.push(`P${i + 1}↔P${j + 1}: ${d.toFixed(2)} mm`);
+      }
+    }
+  }
+  const notes = [fig.notes || '', c2cNotes.length ? `C2C: ${c2cNotes.join(', ')}` : ''].filter(Boolean).join(' — ');
+  const row = `| **${fig.name}** | ${fig.group || 'Custom'} | ${enabled.length} | ${dias} | ${shapes} | ${notes} |`;
+  const btn = document.getElementById('btnCopyMarkdown');
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(row).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied Wiki Row ✓';
+      setTimeout(() => { btn.textContent = orig; }, 1600);
+    }).catch(() => prompt('Copy Wiki Markdown row:', row));
+  } else {
+    prompt('Copy Wiki Markdown row:', row);
+  }
+};
+
 renderAll();
 updateHistoryButtons();
 

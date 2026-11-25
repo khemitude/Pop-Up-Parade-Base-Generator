@@ -678,7 +678,7 @@
       tris.push([[a[0], a[1], deckThick], [b[0], b[1], deckThick], [c[0], c[1], deckThick]]);
     }
 
-    // 6. Peg bosses & peg holes
+      // 6. Peg bosses & peg holes
     for (const h of holeEntries) {
       // Boss outer wall (z = deckThick to zBossTop)
       stitchRings(tris, h.bossCCW, deckThick, h.bossCCW, h.zBossTop, false);
@@ -701,6 +701,41 @@
         for (const [a, b, c] of holeCapTris) {
           tris.push([[a[0], a[1], h.depth], [c[0], c[1], h.depth], [b[0], b[1], h.depth]]);
         }
+      }
+    }
+
+    // 7. Optional underside embossed figure name stamp on inner cavity floor
+    if (params.stampName && figure && (figure.id || figure.name)) {
+      const rawLabel = (figure.name || figure.id)
+        .toUpperCase()
+        .replace(/\([^)]*\)/g, '')
+        .replace(/[^A-Z0-9._ -]/g, '')
+        .trim()
+        .slice(0, 12);
+      if (rawLabel.length) {
+        const yCandidates = [-(diameter * 0.28), diameter * 0.28, -(diameter * 0.18), diameter * 0.18, 0];
+        let stampY = yCandidates[0];
+        let bestClear = -1;
+        for (const yc of yCandidates) {
+          let minD = Infinity;
+          for (const p of pegs) {
+            const d = Math.hypot(0 - (p.x || 0), yc - (p.y || 0)) - ((p.diameter || 4) + clearance) / 2 - 2.2;
+            if (d < minD) minD = d;
+          }
+          if (minD > bestClear) {
+            bestClear = minD;
+            stampY = yc;
+          }
+        }
+        // Scale label height to fit inside the cavity chord at stampY (min 2.6mm keeps ~0.44mm stroke for 0.4mm nozzles)
+        const innerHalfW = Math.max(8, diameter / 2 - (stepped ? stepInset : 0) - 4.0);
+        const maxLabelW = Math.max(12, 2 * Math.sqrt(Math.max(16, innerHalfW * innerHalfW - stampY * stampY)) - 4.0);
+        const minCharH = 2.6;
+        const maxCharsAtMin = Math.max(3, Math.floor((maxLabelW / minCharH + 0.18) / 0.78));
+        const fittedLabel = rawLabel.slice(0, maxCharsAtMin).trim();
+        const maxCharH = maxLabelW / Math.max(0.6, 0.78 * fittedLabel.length - 0.18);
+        const charH = Math.max(minCharH, Math.min(4.2, maxCharH));
+        appendStampedLabel(tris, fittedLabel, 0, stampY, deckThick, deckThick + 0.45, charH);
       }
     }
 
@@ -964,6 +999,89 @@
   }
 
   /**
+   * Append 3x5 block-pixel embossed text (A-Z, 0-9, ., -, _) centered at (cx, cy).
+   * Each pixel run is an independent watertight box with a small gap to avoid shared edges.
+   */
+  function appendStampedLabel(tris, text, cx, cy, zBottom, zTop, charH = 4.2) {
+    const FONT = {
+      A: ['010', '101', '111', '101', '101'],
+      B: ['110', '101', '110', '101', '110'],
+      C: ['011', '100', '100', '100', '011'],
+      D: ['110', '101', '101', '101', '110'],
+      E: ['111', '100', '110', '100', '111'],
+      F: ['111', '100', '110', '100', '100'],
+      G: ['011', '100', '101', '101', '011'],
+      H: ['101', '101', '111', '101', '101'],
+      I: ['111', '010', '010', '010', '111'],
+      J: ['001', '001', '001', '101', '010'],
+      K: ['101', '101', '110', '101', '101'],
+      L: ['100', '100', '100', '100', '111'],
+      M: ['101', '111', '111', '101', '101'],
+      N: ['101', '111', '111', '111', '101'],
+      O: ['010', '101', '101', '101', '010'],
+      P: ['110', '101', '110', '100', '100'],
+      Q: ['010', '101', '101', '111', '011'],
+      R: ['110', '101', '110', '101', '101'],
+      S: ['011', '100', '010', '001', '110'],
+      T: ['111', '010', '010', '010', '010'],
+      U: ['101', '101', '101', '101', '111'],
+      V: ['101', '101', '101', '101', '010'],
+      W: ['101', '101', '111', '111', '101'],
+      X: ['101', '101', '010', '101', '101'],
+      Y: ['101', '101', '010', '010', '010'],
+      Z: ['111', '001', '010', '100', '111'],
+      0: ['111', '101', '101', '101', '111'],
+      1: ['010', '110', '010', '010', '111'],
+      2: ['110', '001', '010', '100', '111'],
+      3: ['110', '001', '010', '001', '110'],
+      4: ['101', '101', '111', '001', '001'],
+      5: ['111', '100', '110', '001', '110'],
+      6: ['011', '100', '111', '101', '111'],
+      7: ['111', '001', '010', '010', '010'],
+      8: ['111', '101', '111', '101', '111'],
+      9: ['111', '101', '111', '001', '110'],
+      '-': ['000', '000', '111', '000', '000'],
+      _: ['000', '000', '000', '000', '111'],
+      '.': ['000', '000', '000', '000', '010'],
+      ' ': ['000', '000', '000', '000', '000'],
+    };
+
+    const cell = charH / 5;
+    const gap = 0.04;
+    const charW = cell * 3;
+    const charGap = cell * 0.9;
+    const chars = String(text).toUpperCase().split('');
+    const totalW = chars.length * charW + Math.max(0, chars.length - 1) * charGap;
+    let cursorX = cx - totalW / 2;
+    const yTop = cy + charH / 2;
+
+    for (const ch of chars) {
+      const glyph = FONT[ch];
+      if (glyph) {
+        for (let r = 0; r < 5; r++) {
+          const row = glyph[r];
+          let c = 0;
+          while (c < 3) {
+            if (row[c] === '1') {
+              let cEnd = c + 1;
+              while (cEnd < 3 && row[cEnd] === '1') cEnd++;
+              const x0 = cursorX + c * cell + gap;
+              const x1 = cursorX + cEnd * cell - gap;
+              const y1 = yTop - r * cell - gap;
+              const y0 = yTop - (r + 1) * cell + gap;
+              appendBox(tris, x0, y0, zBottom, x1, y1, zTop);
+              c = cEnd;
+            } else {
+              c++;
+            }
+          }
+        }
+      }
+      cursorX += charW + charGap;
+    }
+  }
+
+  /**
    * Build a fast, readable 2-row Peg-Fit Test Gauge (1.8-6.2mm in 0.2mm steps, 23 holes)
    * fitting inside a 120x28x1.8mm footprint with 1.0mm outer rim margin and 0.4mm embossed labels.
    */
@@ -1209,6 +1327,7 @@
     buildTestGaugeMesh,
     buildCalibrationBlockMesh,
     buildCalibrationLBracketMesh,
+    appendStampedLabel,
     trianglesToBinarySTL,
   };
 });

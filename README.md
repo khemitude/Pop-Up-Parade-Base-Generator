@@ -8,13 +8,13 @@ A zero-dependency, browser-based parametric 3D base generator for **POP UP PARAD
 
 ## Features at a Glance
 
-- **Uniform Base Styles**: Circle, Hexagon (Flat-Top or Pointy-Top), Octagon, Rounded Square, and Rounded Rectangle, with configurable width/diameter, thickness, optional top chamfer, 2-tier **Stepped Plinth**, **Underside Magnet Pocket**, and **Hollow Shell** (face-down print) mode.
-- **Per-Figure Peg Layouts**: Supports multiple pegs/support rods per figure, **Distance & Angle** or **Manual X / Y** positioning, 5 peg hole shapes (`Round`, `Hexagon (Keyed)`, `D-Shape (Keyed)`, `Round + Square Key`, `Oval / Slot`), blind or through-holes, key angle rotation, and global/per-figure hole clearance.
+- **Uniform Base Styles**: Circle, Hexagon (Flat-Top or Pointy-Top), Octagon, Rounded Square, and Rounded Rectangle, with configurable width/diameter, thickness, optional top chamfer, 2-tier **Stepped Plinth**, **Underside Magnet Pocket**, **Hollow Shell** (face-down print) mode, and optional **Underside Name Stamp** for batch printing.
+- **Per-Figure Peg Layouts**: Supports multiple pegs/support rods per figure, **Distance & Angle**, **Manual X / Y**, or **Center-to-Center (C2C) Pin Distance** triangle solving, 5 peg hole shapes (`Round`, `Hexagon (Keyed)`, `D-Shape (Keyed)`, `Round + Square Key`, `Oval / Slot`), blind or through-holes, key angle rotation, and global/per-figure hole clearance.
 - **Photo Peg Measurer (No Calipers Needed)**: Upload or paste (`Ctrl+V`) a photo of your figure's feet or original base alongside a calibration reference (70×70 mm Calibration Frame, 70×70 mm L-Bracket, standard 103.65 mm PUP hex base, credit/ID card, or 2-point ruler distance). Includes corner auto-detection, base-hole auto-detection, and 3-pt circle / 2-pt edge / 1-pt center measurement tools.
-- **Interactive 3D & 1:1 2D Previews**: Drag-to-rotate 3D isometric preview (with underside flip and zoom) and a 1:1 10 mm grid top-down blueprint (drag to reposition pegs, right-drag or `Shift+drag` to rotate).
-- **Watertight Manifold Mesh Engine**: Pure JavaScript earcut-with-hole-bridging triangulation in [`mesh.js`](mesh.js) that validates manifold geometry in real time and exports binary STLs.
-- **Calibration & Fit-Test STLs Included**: Ready-to-print peg-fit test gauges and 70×70 mm photo calibration frames are included in the repository and can also be generated directly from the app.
-- **Collection Management**: Preloaded with measured Hololive POP UP PARADE presets ([`figures.js`](figures.js)), plus custom figure creation, Undo/Redo (`Ctrl+Z` / `Ctrl+Y`), browser `localStorage` auto-save, and `Export` / `Import Config JSON`.
+- **Interactive 3D & 1:1 2D Previews**: Drag-to-rotate 3D isometric preview (with underside flip and zoom) and a 1:1 10 mm grid top-down blueprint (with live C2C distance lines, drag to reposition pegs, and right-drag or `Shift+drag` to rotate).
+- **Watertight Manifold Mesh Engine**: Pure JavaScript earcut-with-hole-bridging triangulation in [`mesh.js`](mesh.js) that validates manifold geometry in real time, warns on thin walls or shallow blind-hole floors, and exports binary STLs, a compact **2 mm Fit-Test Strip**, or a single `.zip` bundle for all measured figures.
+- **Calibration & Fit-Test STLs Included**: Ready-to-print peg-fit test gauges (plus custom `0.1 mm` fine/micro gauge presets in the app) and 70×70 mm photo calibration frames.
+- **Collection Management**: Preloaded with measured Hololive POP UP PARADE presets ([`figures.js`](figures.js)), live figure search (by name, group, or notes), per-figure base width overrides, custom figure creation, single-figure **Export / Merge** JSON, **Shareable Figure Link** (`#fig=...`), **Copy Wiki Row** Markdown export, Undo/Redo (`Ctrl+Z` / `Ctrl+Y`), browser `localStorage` auto-save, and `Export` / `Import Config JSON`.
 
 ---
 

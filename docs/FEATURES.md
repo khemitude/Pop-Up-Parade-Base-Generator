@@ -16,17 +16,23 @@ All settings in **1. Uniform Base Style** apply uniformly across every figure in
 | **Top Chamfer** | Adds a beveled edge around the top perimeter (`0.2–5 mm`). |
 | **Stepped Plinth** | Splits the base into a lower tier and an inset upper tier (`Step Inset` and `Lower Tier Height`). |
 | **Underside Magnet Pocket** | Cuts a centered circular recess into the bottom face (`Magnet Dia` and `Magnet Depth`). |
-| **Hollow Shell (Face-Down Print)** | Experimental mode that hollows the underside and generates internal peg bosses (mirroring injection-molded bases) for face-down printing. |
+| **Hollow Shell (Face-Down Print)** | Hollows the underside and generates internal peg bosses (mirroring injection-molded bases) for face-down printing. When combined with **Stepped Plinth**, the inner cavity wall adds a 45° chamfer/bevel so overhangs print cleanly without supports. |
+| **Stamp Figure Name on Underside** | Available in Hollow Shell mode; embosses the figure's name onto the inner cavity floor (auto-scaling down to fit smaller base diameters) so batch-printed bases are easy to tell apart. |
 
 ---
 
 ## 2. Figure Collection & Persistence
 
-- **Preloaded Presets**: Ships with measured POP UP PARADE presets in [`figures.js`](../figures.js) (`DEFAULT_CONFIG`).
+- **Preloaded Presets & Safe Update Prompt**: Ships with measured POP UP PARADE presets in [`figures.js`](../figures.js) (`DEFAULT_CONFIG`). When built-in presets are updated (`presetsVersion`), returning users are shown the exact list of changed figures and fields (peg layout/sizes, facing, notes) before choosing to update built-in figures while preserving custom figures and base style.
+- **Figure Search**: Filter the figure list in real time by figure name, group/series, or notes.
+- **Export Figure JSON / Merge Figure(s) / Shareable Link / Wiki Row**: Share a single figure's JSON (downloads + copies to clipboard), copy a one-click **`#fig=...` Shareable Figure Link**, copy a formatted **Wiki Markdown Row** for GitHub/Wiki contributions, or merge imported figure(s) into your existing collection without overwriting it.
+- **Per-Figure Base Width Override**: Optionally override **Width / Diameter (mm)** for a specific figure (e.g., oversized POP UP PARADE L/SP bases) while keeping the shared uniform style.
 - **Auto-Save**: All edits automatically save to browser `localStorage`.
 - **Undo / Redo**: Header buttons and keyboard shortcuts (`Ctrl+Z` to Undo, `Ctrl+Y` or `Ctrl+Shift+Z` to Redo).
 - **Reset Defaults / Undo Reset**: Restores the built-in presets, with a one-click **Undo Reset (Restore Previous)** safety net.
 - **Export / Import Config JSON**: Save or restore your entire base style and figure list as a `.json` file.
+- **Fit-Test Strip (2 mm) & Batch ZIP**: **Download Fit-Test Strip (2 mm)** exports a compact `2 mm` rounded-rectangle strip tightly wrapping just the peg holes to test spacing & fit quickly; **Download All Measured STLs (.zip)** bundles all measured bases into a single `.zip` archive; the header **Gauge** selector exports `1.8–6.2 mm (0.2 mm)`, `3.0–5.0 mm (0.1 mm Fine)`, or `3.6–4.6 mm (0.1 mm Micro)` fit-test gauges.
+- **Safety Warnings**: The status bar warns if any peg hole sits within `2 mm` of the top perimeter or if a blind hole leaves less than `0.8 mm` of floor thickness.
 
 ---
 
@@ -35,6 +41,7 @@ All settings in **1. Uniform Base Style** apply uniformly across every figure in
 ### Measurement Modes
 - **Distance & Angle**: Ideal for standard 2-peg figures. Automatically computes `(x, y)` coordinates from **Peg-to-Peg Dist (mm)**, **Stance Angle (°)**, and **Center Offset X / Y (mm)**.
 - **Manual X / Y**: Direct coordinate control for 1-peg, 3-peg, or asymmetric poses.
+- **Center-to-Center (C2C) Distances**: Live readout of `P1 ↔ P2`, `P1 ↔ P3`, and `P2 ↔ P3` spacing (for 2–3+ peg figures) with **Apply C2C → X / Y** trilateration and a **Flip** toggle—type your caliper pin-to-pin distances directly to solve `(X, Y)` coordinates automatically.
 
 ### Supported Peg Hole Shapes
 Defined in [`mesh.js`](../mesh.js) (`generateHolePolygon`):

@@ -16,7 +16,12 @@
       <button id="btnUndo" title="Undo (Ctrl+Z)" disabled>↶ Undo</button>
       <button id="btnRedo" title="Redo (Ctrl+Y / Ctrl+Shift+Z)" disabled>↷ Redo</button>
       <button id="btnExportCalBlock" title="Print a 70x70mm square frame for perspective-corrected photo measurements">Download Calibration Frame STL</button>
-      <button id="btnExportGauge" title="Print a quick 10-minute strip to test peg hole fit">Download Peg-Fit Test Gauge STL</button>
+      <select id="gaugePreset" class="gauge-select" title="Peg-Fit Test Gauge range">
+        <option value="standard">Gauge: 1.8–6.2mm (0.2mm)</option>
+        <option value="fine">Gauge: 3.0–5.0mm (0.1mm Fine)</option>
+        <option value="micro">Gauge: 3.6–4.6mm (0.1mm Micro)</option>
+      </select>
+      <button id="btnExportGauge" title="Print a quick strip to test peg hole fit">Download Gauge STL</button>
       <button id="btnExportJson">Export Config JSON</button>
       <button id="btnImportJson">Import Config JSON</button>
       <input type="file" id="fileImportJson" accept=".json" style="display:none" />
@@ -27,6 +32,7 @@
     <!-- LEFT: Uniform Base Settings -->
     <section class="card">
       <h2>1. Uniform Base Style</h2>
+      <div class="muted-sm">Shared across all figures in your collection.</div>
       <div class="field-grid">
         <div class="field full">
           <label>Base Shape</label>
@@ -87,7 +93,14 @@
         <div class="field full">
           <label class="checkbox-row" title="Prints top-down with a hollow underside and internal peg bosses like the original base">
             <input type="checkbox" id="baseHollow" />
-            Hollow Shell (Face-Down Print — Experimental)
+            Hollow Shell (Face-Down Print)
+          </label>
+        </div>
+
+        <div class="field full" id="stampNameWrap">
+          <label class="checkbox-row" title="Embosses the figure name onto the inner cavity floor (Hollow Shell mode)">
+            <input type="checkbox" id="baseStampName" />
+            Stamp Figure Name on Underside (Hollow Shell)
           </label>
         </div>
 
@@ -102,10 +115,17 @@
       </div>
 
       <h2>2. Your Figures</h2>
+      <div class="muted-sm">Auto-saved in this browser — use Export Config JSON for backups.</div>
+      <input type="search" id="figureSearch" placeholder="Search figures by name or group…" aria-label="Search figures" />
       <div class="figure-list" id="figureList"></div>
       <div class="field-grid">
         <button id="btnAddFigure">+ Add Custom Figure</button>
         <button id="btnResetPresets">Reset Defaults</button>
+        <button id="btnShareFigure" title="Export & copy JSON for only the active figure">Export Figure JSON</button>
+        <button id="btnMergeFigures" title="Import and merge figure(s) without overwriting your collection">Merge Figure(s)</button>
+        <button id="btnCopyShareLink" title="Copy a shareable URL that imports this figure when opened">Copy Share Link</button>
+        <button id="btnCopyMarkdown" title="Copy a formatted Markdown table row for GitHub Issues or the Wiki Figure Measurements Database">Copy Wiki Row</button>
+        <input type="file" id="fileMergeFigures" accept=".json" style="display:none" />
         <button id="btnUndoReset" style="grid-column: 1 / -1; display:none;">Undo Reset (Restore Previous)</button>
       </div>
     </section>
@@ -120,9 +140,11 @@
           </div>
           <div class="row-gap">
             <button class="primary" id="btnDownloadOne">Download STL</button>
-            <button class="ok" id="btnDownloadAll">Download All Measured STLs</button>
+            <button id="btnDownloadTestDisc" title="Export a fast 2 mm strip wrapping just the peg holes to verify spacing &amp; fit">Download Fit-Test Strip (2 mm)</button>
+            <button class="ok" id="btnDownloadAll" title="Bundles every figure marked Measured &amp; Verified into one .zip">Download All Measured STLs (.zip)</button>
           </div>
         </div>
+        <div class="muted-sm">Batch download bundles every figure marked <em>Measured &amp; Verified</em> into one <code>.zip</code>.</div>
         <div id="validationBar" class="status-bar ok">Mesh ready — watertight manifold geometry.</div>
       </div>
 
@@ -139,6 +161,11 @@
 
       <div class="canvas-wrap">
         <div class="canvas-label">Top-Down 1:1 Blueprint (10 mm grid — drag to move, right-drag or Shift+drag to rotate)</div>
+        <div class="canvas-controls">
+          <label class="checkbox-row" style="font-size:0.74rem; background:rgba(15,19,26,0.8); padding:4px 8px; border-radius:6px; border:1px solid var(--border);">
+            <input type="checkbox" id="chkShowC2CLines" checked /> C2C Lines
+          </label>
+        </div>
         <canvas id="canvas2d" width="760" height="360"></canvas>
       </div>
     </section>
@@ -146,6 +173,7 @@
     <!-- RIGHT: Per-Figure Peg Measurements -->
     <section class="card">
       <h2>3. Peg Layout &amp; Measurements</h2>
+      <div class="muted-sm">Have calipers? Enter pin-to-pin distances below. No calipers? Use the Photo Measurer:</div>
 
       <button id="btnOpenPhotoMeasurer" class="primary full-width">Measure Pegs from Photo (No Calipers)</button>
 
@@ -199,6 +227,42 @@
         <input type="number" id="holeClearance" min="0" max="0.8" step="0.05" value="0.20" />
       </div>
 
+      <div class="field">
+        <label>
+          <span>Base Width Override (mm)</span>
+          <span class="hint-muted">Blank = use Uniform Base Style</span>
+        </label>
+        <input type="number" id="figCustomDiameter" min="45" max="180" step="0.5" placeholder="Use global" />
+      </div>
+
+      <div id="c2cPanel" class="peg-card" style="display:none;">
+        <div class="peg-header">
+          <strong>Center-to-Center (C2C) Distances</strong>
+          <label id="c2cFlipWrap" class="checkbox-row" style="font-size:0.75rem; display:none;">
+            <input type="checkbox" id="c2cFlip" /> Flip
+          </label>
+        </div>
+        <div class="field-grid">
+          <div class="field">
+            <label>P1 ↔ P2 (mm)</label>
+            <input type="number" id="c2c12" min="0.5" max="140" step="0.05" />
+          </div>
+          <div class="field" id="c2c13Wrap">
+            <label>P1 ↔ P3 (mm)</label>
+            <input type="number" id="c2c13" min="0.5" max="140" step="0.05" />
+          </div>
+          <div class="field" id="c2c23Wrap">
+            <label>P2 ↔ P3 (mm)</label>
+            <input type="number" id="c2c23" min="0.5" max="140" step="0.05" />
+          </div>
+          <div class="field" style="justify-content:flex-end;">
+            <button id="btnApplyC2C" class="primary" title="Solve X / Y coordinates from these center-to-center caliper distances">Apply C2C → X / Y</button>
+          </div>
+        </div>
+        <div class="muted-sm" style="margin-top:6px;">Use <strong>Flip</strong> if mirrored, then rotate/drag in the 2D Blueprint to match Facing.</div>
+        <div id="c2cError" class="hint-warn" style="display:none;"></div>
+      </div>
+
       <div id="pegsContainer" class="stack-sm"></div>
 
       <div class="field-grid">
@@ -213,7 +277,7 @@
       </div>
 
       <div class="note-box">
-        <strong>Tip:</strong> Print the <em>Peg-Fit Test Gauge</em> first (~10 min). Test your figure's pegs in the 1.8–6.2 mm (0.2 mm step) holes to find the exact snug fit, then set <strong>Hole Clearance</strong> accordingly.
+        <strong>Tip:</strong> Print the <em>Peg-Fit Test Gauge</em> first. Test your figure's pegs in the 1.8–6.2 mm (0.2 mm step) holes to find the exact snug fit, then set <strong>Hole Clearance</strong> accordingly.
       </div>
     </section>
   </main>

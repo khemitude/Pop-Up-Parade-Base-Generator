@@ -8,8 +8,8 @@ This guide walks you through measuring a POP UP PARADE figure, designing a unifo
 
 Before designing bases for your whole shelf, print two small helper tools:
 
-1. **Peg-Fit Test Gauge** (~10 min print):
-   - Use [`pup_peg_fit_test_gauge_1.8_to_6.2mm.stl`](../pup_peg_fit_test_gauge_1.8_to_6.2mm.stl) (or click **Download Peg-Fit Test Gauge STL** in the app header).
+1. **Peg-Fit Test Gauge** (quick test strip):
+   - Use [`pup_peg_fit_test_gauge_1.8_to_6.2mm.stl`](../pup_peg_fit_test_gauge_1.8_to_6.2mm.stl) (or pick a range from the **Gauge** dropdown in the app header—`1.8–6.2mm (0.2mm)`, `3.0–5.0mm (0.1mm Fine)`, or `3.6–4.6mm (0.1mm Micro)`—and click **Download Gauge STL**).
    - Test your figure's foot pegs in the numbered holes (1.8 mm to 6.2 mm in 0.2 mm steps) to find the exact diameter that slides in snugly without forcing.
 2. **Photo Calibration Frame** (only needed if you don't have calipers):
    - Print [`pup_photo_calibration_frame_70mm.stl`](../pup_photo_calibration_frame_70mm.stl) (a 70×70 mm square frame) or [`pup_photo_calibration_l_bracket_70mm.stl`](../pup_photo_calibration_l_bracket_70mm.stl) (a 70×70 mm L-bracket for poses where a closed frame won't fit around the feet).
@@ -19,7 +19,7 @@ Before designing bases for your whole shelf, print two small helper tools:
 ## Step 2: Select or Create Your Figure
 
 1. Open [`index.html`](../index.html) in your browser.
-2. Under **2. Your Figures** (left panel), click an existing preset to inspect/edit it, or click **+ Add Custom Figure** to create a new entry.
+2. Under **2. Your Figures** (left panel), use the search box to filter by name, group, or notes and click an existing preset to inspect/edit it, or click **+ Add Custom Figure** to create a new entry.
 
 ---
 
@@ -58,7 +58,8 @@ Choose **Method A** if you want to measure from a photo, or **Method B** if you 
 1. Measure each peg's diameter, peg length (depth), and center-to-center distance.
 2. Under **3. Peg Layout & Measurements**:
    - Use **Distance & Angle** mode for standard 2-peg stances (enter **Peg-to-Peg Dist (mm)**, **Stance Angle (°)**, and optional **Center Offset X / Y**).
-   - Use **Manual X / Y** mode for 1-peg, 3-peg, or asymmetric stances.
+   - Use **Center-to-Center (C2C) Distances** for 3-peg triangles: enter your measured `P1 ↔ P2`, `P1 ↔ P3`, and `P2 ↔ P3` distances and click **Apply C2C → X / Y** (use **Flip** if the triangle is mirrored, then rotate as needed).
+   - Use **Manual X / Y** mode for 1-peg or direct coordinate adjustments.
 3. For each peg card, set:
    - **Diameter (mm)** and **Depth (mm)**
    - **Peg Shape**: `Round`, `Hexagon (Keyed)`, `D-Shape (Keyed)`, `Round + Square Key`, or `Oval / Slot`
@@ -77,14 +78,15 @@ In **1. Uniform Base Style** (left panel), configure the shared look for all you
    - **Top Chamfer**: Adds a clean beveled top edge.
    - **Stepped Plinth**: Creates a 2-tier beveled display base (**Step Inset** and **Lower Tier Height**).
    - **Underside Magnet Pocket**: Adds a centered bottom recess (e.g., `8.2 mm` × `2.2 mm` for an 8×2 mm magnet or steel washer).
-   - **Hollow Shell (Face-Down Print — Experimental)**: Hollows the underside with internal peg bosses so the base prints face-down like an injection-molded PUP base.
+   - **Hollow Shell (Face-Down Print)**: Hollows the underside with internal peg bosses so the base prints face-down like an injection-molded PUP base. When paired with **Stepped Plinth**, it automatically adds an internal 45° chamfer so the step overhang prints cleanly without supports.
+   - **Stamp Figure Name on Underside (Hollow Shell)**: Embosses the figure's name on the inner cavity floor—handy when batch-printing multiple bases.
 
 ---
 
 ## Step 5: Preview & Verify
 
 - **3D Isometric Preview**: Drag to rotate, scroll to zoom, and click **Flip Bottom** to inspect underside magnet pockets, hollow bosses, or through-holes.
-- **Top-Down 1:1 Blueprint**: Shows the base outline and peg holes on a 10 mm grid.
+- **Top-Down 1:1 Blueprint**: Shows the base outline, peg holes, and toggleable **C2C Lines** (live millimeter distances between pegs) on a 10 mm grid.
   - **Drag** a peg to reposition it, or **Right-drag / `Shift+drag`** to rotate the peg group.
   - Use **Center Holes** or the **Rotate ±15° / ±90° / 180°** buttons to align the figure's facing direction.
 - Confirm the status bar reads: `Mesh ready — watertight manifold geometry.`
@@ -94,8 +96,9 @@ In **1. Uniform Base Style** (left panel), configure the shared look for all you
 
 ## Step 6: Export STL & 3D Print
 
-1. Click **Download STL** to export the active figure's base, or **Download All Measured STLs** to batch-export every figure marked as measured.
+1. Click **Download Fit-Test Strip (2 mm)** first if you want a fast, compact strip wrapping just the peg holes to verify pin spacing and fit before printing the full plinth, **Download STL** for the active figure's full base, or **Download All Measured STLs (.zip)** to batch-export every figure marked as measured into a single `.zip` file.
 2. **Slicing Tips**:
    - **Solid / Stepped Bases**: Print right-side up (flat bottom on the build plate). `0.16–0.20 mm` layer height, `15–20%` gyroid infill, 3–4 walls. No supports needed.
    - **Hollow Shell Bases**: Print **face-down** (top display surface on the build plate) for a smooth textured/PEI top finish.
-3. **Backup Your Collection**: Click **Export Config JSON** in the header to save all your figures and base settings to a portable `.json` file.
+   - **Slicer Preview Check**: Glance at the layer preview in OrcaSlicer/PrusaSlicer before printing—especially when using **Stamp Figure Name on Underside** or close multi-pin bosses.
+3. **Backup & Share**: Click **Export Config JSON** in the header to back up your entire collection, or use **Export Figure JSON**, **Copy Share Link**, **Copy Wiki Row**, and **Merge Figure(s)** under **2. Your Figures** to share or import individual figures.

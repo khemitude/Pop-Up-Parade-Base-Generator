@@ -73,10 +73,21 @@ checkWatertight(
   'hollow_stepped_hexagon',
   PUPMesh.buildBaseMesh({ shape: 'hexagon', diameter: 103.65, height: 14, stepped: true, stepInset: 2, stepHeight: 8.65, hollow: true, clearance: 0.2 }, sampleFig)
 );
+checkWatertight(
+  'hollow_stepped_hexagon_stamped',
+  PUPMesh.buildBaseMesh({ shape: 'hexagon', diameter: 103.65, height: 14, stepped: true, stepInset: 2, stepHeight: 8.65, hollow: true, stampName: true, clearance: 0.2 }, { id: 'suisei_sp', name: 'Hoshimachi Suisei (SP)', pegs: sampleFig.pegs })
+);
+checkWatertight(
+  'hollow_circle_45mm_stamped',
+  PUPMesh.buildBaseMesh({ shape: 'circle', diameter: 45, height: 12, hollow: true, stampName: true, clearance: 0.2 }, { id: 'okayu', name: 'Nekomata Okayu', pegs: [{ x: -10, y: 0, diameter: 4, depth: 8, shape: 'hexagon', enabled: true }, { x: 10, y: 0, diameter: 4, depth: 8, shape: 'hexagon', enabled: true }] })
+);
 
 const gaugeTris = PUPMesh.buildTestGaugeMesh(1.8, 0.2, 23);
 checkWatertight('test_gauge', gaugeTris);
 fs.writeFileSync(path.join(__dirname, 'pup_peg_fit_test_gauge_1.8_to_6.2mm.stl'), PUPMesh.trianglesToBinarySTL(gaugeTris, 'PUP Peg-Fit Test Gauge 1.8-6.2mm (0.2mm step)'));
+
+const fineGaugeTris = PUPMesh.buildTestGaugeMesh(3.0, 0.1, 21);
+checkWatertight('test_gauge_fine_0.1mm', fineGaugeTris);
 
 const calTris = PUPMesh.buildCalibrationBlockMesh(70, 8, 2.4);
 checkWatertight('calibration_frame_70mm', calTris);

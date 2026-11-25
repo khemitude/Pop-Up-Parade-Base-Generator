@@ -93,7 +93,7 @@ label {
   justify-content: space-between;
   align-items: center;
 }
-input[type="number"], input[type="text"], select {
+input[type="number"], input[type="text"], input[type="search"], select {
   background: var(--panel-2);
   color: var(--text);
   border: 1px solid var(--border);
@@ -435,6 +435,7 @@ canvas { display: block; width: 100%; height: auto; }
 .fig-notes { font-size: 0.8rem; color: var(--muted); }
 .hint-muted { font-size: 0.72rem; color: var(--muted); }
 .hint-accent { font-size: 0.72rem; color: var(--accent); }
+.hint-warn { font-size: 0.75rem; color: var(--danger); margin-top: 6px; }
 .muted-sm { font-size: 0.78rem; color: var(--muted); }
 .ok-sm { font-size: 0.78rem; color: var(--ok); }
 .photo-grid-toggle { font-size: 0.78rem; margin-left: 4px; }
@@ -442,3 +443,4 @@ canvas { display: block; width: 100%; height: auto; }
 .photo-hint-title { font-size: 1rem; color: var(--text); }
 .photo-hint-body { font-size: 0.82rem; max-width: 460px; }
 .photo-footer { margin-top: auto; display: flex; gap: 8px; }
+.gauge-select { width: auto; padding: 6px 8px; font-size: 0.8rem; }

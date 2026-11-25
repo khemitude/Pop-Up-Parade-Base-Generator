@@ -4,6 +4,7 @@
  */
 
 const DEFAULT_CONFIG = {
+  presetsVersion: 2,
   defaults: {
     shape: 'hexagon',
     diameter: 103.65,
@@ -18,6 +19,7 @@ const DEFAULT_CONFIG = {
     magnetDiameter: 8.2,
     magnetDepth: 2.2,
     hollow: true,
+    stampName: false,
   },
   figures: [
     {
@@ -61,13 +63,13 @@ const DEFAULT_CONFIG = {
     },
     {
       id: 'okayu', name: 'Nekomata Okayu', group: 'Hololive Gamers', measured: true,
-      notes: 'Measure both foot pegs and center-to-center spacing.',
-      mode: 'manual', centerOffsetX: 0, centerOffsetY: 0, stanceAngle: 0, pegDistance: 24,
+      notes: 'Right foot: 13.98mm c2c; 54.00mm from left foot to both right heel and toe pegs.',
+      mode: 'manual', centerOffsetX: 0, centerOffsetY: 0, stanceAngle: 0, pegDistance: 54,
       facing: 'down',
       pegs: [
-        { label: 'Left Foot', x: -25.37, y: 0.91, diameter: 6, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
-        { label: 'Right Foot (Heel)', x: 25.37, y: 6.4, diameter: 5.1, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
-        { label: 'Right Foot (Toe)', x: 25.35, y: -6.4, diameter: 6.1, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
+        { label: 'Left Foot', x: -27, y: 6.99, diameter: 6, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
+        { label: 'Right Foot (Heel)', x: 27, y: 6.87, diameter: 5.1, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
+        { label: 'Right Foot (Toe)', x: 25.16, y: -6.99, diameter: 6.1, depth: 10, shape: 'hexagon', flatAngle: 0, through: false, enabled: true },
       ],
     },
     {

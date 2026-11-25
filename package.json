@@ -1,6 +1,6 @@
 {
   "name": "pop-up-parade-base-generator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Parametric 3D-printable base generator for POP UP PARADE figures with perspective-corrected photo peg measurement and watertight binary STL export.",
   "main": "mesh.js",
   "scripts": {
