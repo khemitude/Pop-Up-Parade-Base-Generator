@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Figure Search Box**: Filter figures in **2. Your Figures** in real time by name, group, or notes.
 - **Single-Figure Share & Merge**: Export/copy a single figure's JSON (`Export Figure JSON`) and merge imported figure(s) (`Merge Figure(s)`) without overwriting existing presets.
-- **Underside Name Stamp**: Optional embossed figure name on the inner cavity floor in Hollow Shell mode (`mesh.js`: `appendStampedLabel`).
+- **Underside Name Stamp**: Optional embossed figure name on the inner cavity floor in Hollow Shell mode (`mesh.js`: `appendStampedLabel`), auto-scaling to fit smaller base diameters.
 - **Batch ZIP Export**: **Download All Measured STLs** now bundles all measured STLs into a single `.zip` archive (`createZipBytes`).
 - **Depth & Edge Safety Warnings**: Live validation warnings when blind holes leave `< 0.8 mm` floor or pegs sit within `2 mm` of the top perimeter.
 - **Fine & Micro Test Gauge Presets**: Header gauge selector for `1.8–6.2 mm (0.2 mm)`, `3.0–5.0 mm (0.1 mm Fine)`, and `3.6–4.6 mm (0.1 mm Micro)`.

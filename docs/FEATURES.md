@@ -17,7 +17,7 @@ All settings in **1. Uniform Base Style** apply uniformly across every figure in
 | **Stepped Plinth** | Splits the base into a lower tier and an inset upper tier (`Step Inset` and `Lower Tier Height`). |
 | **Underside Magnet Pocket** | Cuts a centered circular recess into the bottom face (`Magnet Dia` and `Magnet Depth`). |
 | **Hollow Shell (Face-Down Print)** | Hollows the underside and generates internal peg bosses (mirroring injection-molded bases) for face-down printing. When combined with **Stepped Plinth**, the inner cavity wall adds a 45° chamfer/bevel so overhangs print cleanly without supports. |
-| **Stamp Figure Name on Underside** | Available in Hollow Shell mode; embosses the figure's name onto the inner cavity floor so batch-printed bases are easy to tell apart. |
+| **Stamp Figure Name on Underside** | Available in Hollow Shell mode; embosses the figure's name onto the inner cavity floor (auto-scaling down to fit smaller base diameters) so batch-printed bases are easy to tell apart. |
 
 ---
 
