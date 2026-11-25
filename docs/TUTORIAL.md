@@ -9,7 +9,7 @@ This guide walks you through measuring a POP UP PARADE figure, designing a unifo
 Before designing bases for your whole shelf, print two small helper tools:
 
 1. **Peg-Fit Test Gauge** (~10 min print):
-   - Use [`pup_peg_fit_test_gauge_1.8_to_6.2mm.stl`](../pup_peg_fit_test_gauge_1.8_to_6.2mm.stl) (or click **Download Peg-Fit Test Gauge STL** in the app header).
+   - Use [`pup_peg_fit_test_gauge_1.8_to_6.2mm.stl`](../pup_peg_fit_test_gauge_1.8_to_6.2mm.stl) (or pick a range from the **Gauge** dropdown in the app header—`1.8–6.2mm (0.2mm)`, `3.0–5.0mm (0.1mm Fine)`, or `3.6–4.6mm (0.1mm Micro)`—and click **Download Gauge STL**).
    - Test your figure's foot pegs in the numbered holes (1.8 mm to 6.2 mm in 0.2 mm steps) to find the exact diameter that slides in snugly without forcing.
 2. **Photo Calibration Frame** (only needed if you don't have calipers):
    - Print [`pup_photo_calibration_frame_70mm.stl`](../pup_photo_calibration_frame_70mm.stl) (a 70×70 mm square frame) or [`pup_photo_calibration_l_bracket_70mm.stl`](../pup_photo_calibration_l_bracket_70mm.stl) (a 70×70 mm L-bracket for poses where a closed frame won't fit around the feet).
@@ -96,8 +96,8 @@ In **1. Uniform Base Style** (left panel), configure the shared look for all you
 
 ## Step 6: Export STL & 3D Print
 
-1. Click **Download STL** to export the active figure's base, or **Download All Measured STLs** to batch-export every figure marked as measured into a single `.zip` file.
+1. Click **Download STL** to export the active figure's base, or **Download All Measured STLs (.zip)** to batch-export every figure marked as measured into a single `.zip` file.
 2. **Slicing Tips**:
    - **Solid / Stepped Bases**: Print right-side up (flat bottom on the build plate). `0.16–0.20 mm` layer height, `15–20%` gyroid infill, 3–4 walls. No supports needed.
    - **Hollow Shell Bases**: Print **face-down** (top display surface on the build plate) for a smooth textured/PEI top finish.
-3. **Backup Your Collection**: Click **Export Config JSON** in the header to save all your figures and base settings to a portable `.json` file.
+3. **Backup & Share**: Click **Export Config JSON** in the header to back up your entire collection, or use **Export Figure JSON** / **Merge Figure(s)** under **2. Your Figures** to share or import individual figures.
