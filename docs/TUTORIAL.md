@@ -100,4 +100,5 @@ In **1. Uniform Base Style** (left panel), configure the shared look for all you
 2. **Slicing Tips**:
    - **Solid / Stepped Bases**: Print right-side up (flat bottom on the build plate). `0.16–0.20 mm` layer height, `15–20%` gyroid infill, 3–4 walls. No supports needed.
    - **Hollow Shell Bases**: Print **face-down** (top display surface on the build plate) for a smooth textured/PEI top finish.
+   - **Slicer Preview Check**: Glance at the layer preview in OrcaSlicer/PrusaSlicer before printing—especially when using **Stamp Figure Name on Underside** or close multi-pin bosses.
 3. **Backup & Share**: Click **Export Config JSON** in the header to back up your entire collection, or use **Export Figure JSON**, **Copy Share Link**, **Copy Wiki Row**, and **Merge Figure(s)** under **2. Your Figures** to share or import individual figures.

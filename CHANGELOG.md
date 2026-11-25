@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Per-Figure Base Width Override**: Optional **Base Width Override (mm)** per figure for oversized POP UP PARADE L/SP or wide-stance figures.
 - **Shareable Figure Links (`#fig=...`)**: **Copy Shareable Figure Link** encodes a figure into a URL hash that prompts to import when opened.
 - **Center-to-Center (C2C) Pin Solver**: Live `P1 ↔ P2`, `P1 ↔ P3`, and `P2 ↔ P3` distance readout and trilateration solver (**Apply C2C → X / Y** with **Flip** toggle) for 2- and 3-peg caliper measurements.
-- **Workflow Hints**: Added concise UI hints for global base settings, browser auto-save/backups, caliper-vs-photo entry, and `.zip` batch export filtering; removed inaccurate print-time estimates for test gauges/strips.
+- **Workflow Hints**: Added concise UI hints for global base settings, browser auto-save/backups, caliper-vs-photo entry, C2C triangle orientation, `.zip` batch export filtering, and slicer layer-preview checks; removed inaccurate print-time estimates for test gauges/strips.
 - **Figure Search Box**: Filter figures in **2. Your Figures** in real time by name, group, or notes.
 - **Single-Figure Share & Merge**: Export/copy a single figure's JSON (`Export Figure JSON`) and merge imported figure(s) (`Merge Figure(s)`) without overwriting existing presets.
 - **Underside Name Stamp**: Optional embossed figure name on the inner cavity floor in Hollow Shell mode (`mesh.js`: `appendStampedLabel`), auto-scaling to fit smaller base diameters.
