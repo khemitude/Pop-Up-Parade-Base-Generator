@@ -2,6 +2,8 @@
 
 A zero-dependency, browser-based parametric 3D base generator for **POP UP PARADE** (and similar pegged) figures. Design a single uniform base style—circle, hexagon, octagon, rounded square, or rounded rectangle—dial in per-figure peg layouts with calipers or the built-in **perspective-corrected Photo Peg Measurer**, preview in 3D and 1:1 2D, and export **watertight binary STL** files ready for 3D printing.
 
+**[Launch Live App](https://khemitude.github.io/Pop-Up-Parade-Base-Generator/)**
+
 ---
 
 ## Features at a Glance
@@ -18,13 +20,15 @@ A zero-dependency, browser-based parametric 3D base generator for **POP UP PARAD
 
 ## How to Run
 
-The app is 100% client-side HTML, CSS, and vanilla JavaScript—no build step, bundler, or internet connection required.
+### Option 1: Use the Live Web App (No Setup)
+Open **[https://khemitude.github.io/Pop-Up-Parade-Base-Generator/](https://khemitude.github.io/Pop-Up-Parade-Base-Generator/)** in any modern browser. Everything runs locally in your browser—no data or photos leave your device.
 
-### Option 1: Open Directly in a Browser (Simplest)
+### Option 2: Open Locally in a Browser
+The app is 100% client-side HTML, CSS, and vanilla JavaScript—no build step, bundler, or internet connection required.
 1. Download or clone this repository.
 2. Double-click [`index.html`](index.html) (or open it via **File → Open File…** in Chrome, Edge, Firefox, or Safari).
 
-### Option 2: Run a Local Web Server
+### Option 3: Run a Local Web Server
 Serving over `localhost` is useful if you want to test in a clean HTTP origin or host on GitHub Pages:
 
 ```bash
@@ -37,7 +41,7 @@ npx serve .
 
 Then open `http://localhost:8080` in your browser.
 
-### Option 3: Run Mesh Verification (Node.js)
+### Option 4: Run Mesh Verification (Node.js)
 To verify that [`mesh.js`](mesh.js) produces watertight, non-degenerate manifold STLs across all base shapes, stepped/magnet/hollow variants, gauges, and calibration blocks:
 
 ```bash
