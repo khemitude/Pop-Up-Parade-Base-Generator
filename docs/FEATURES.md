@@ -48,9 +48,8 @@ Defined in [`mesh.js`](../mesh.js) (`generateHolePolygon`):
 | **Oval / Slot** | Pill-shaped elongated slot, rotated by `Key Angle (°)`. |
 
 ### Hole Clearance
-**Hole Clearance (+mm)** adds extra diameter to every peg hole on the active figure (`0.00–0.80 mm`).
-- Set to `0.00` if your diameters already come from the **Peg-Fit Test Gauge**, **Auto-Detect Base Holes**, or fit-adjusted calipers.
-- Set to `~0.15–0.25` mm when entering raw peg diameters for typical FDM printer tolerances.
+**Hole Clearance (+mm)** adds extra diameter to every peg hole on the active figure (`0.00–0.80 mm`, default `0.15 mm`).
+- **Always keep a positive tolerance** (`0.15–0.20 mm` recommended for FDM) unless you have already verified the exact fit on the **Peg-Fit Test Gauge** or enabled XY hole compensation (e.g., `+0.10 mm`) in your slicer—printing at `0.00` clearance without compensation can make holes too tight and snap figure pegs.
 
 ### Group Transform Helpers
 - **Center Holes**: Translates all enabled holes so their bounding center sits at `(0, 0)`.

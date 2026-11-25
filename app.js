@@ -13,7 +13,7 @@ const DEFAULT_CONFIG = {
     stepped: true,
     stepInset: 2,
     stepHeight: 8.65,
-    clearance: 0,
+    clearance: 0.15,
     magnetPocket: false,
     magnetDiameter: 8.2,
     magnetDepth: 2.2,

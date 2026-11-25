@@ -48,7 +48,9 @@ Choose **Method A** if you want to measure from a photo, or **Method B** if you 
    - Check **Auto-center pegs around base (0, 0)** to keep the figure centered on the base.
    - Check **Mirror X (only if looking up at soles)** *only* if your photo was taken looking up at the bottom of the figure's feet (flipping left/right so the top-down base matches).
    - Set **Figure Facing in Photo** to match which edge of the photo the figure is facing (`Bottom (-Y)` is default).
-   - Set **Hole Clearance (+mm)** (`0.00` if you already used the physical Test Gauge or Auto-Detect Base Holes; `0.15–0.25` if you measured raw peg diameters and want printing tolerance).
+   - Set **Hole Clearance (+mm)** to **`0.15–0.20 mm`** by default so holes have safe printing tolerance (`0.00` only if you already tested the exact hole on the physical **Peg-Fit Test Gauge** or have XY hole compensation enabled in your slicer).
+
+> **Important — Always Keep a Hole Tolerance:** 3D-printed holes almost always shrink slightly inward. Printing with `0.00` clearance and no slicer XY hole compensation can make holes too tight and **snap fragile figure pegs**—never force a tight peg into a hole.
 8. Click **Apply to Active Figure**.
 
 ### Method B: Calipers (Manual Entry)
@@ -61,7 +63,7 @@ Choose **Method A** if you want to measure from a photo, or **Method B** if you 
    - **Diameter (mm)** and **Depth (mm)**
    - **Peg Shape**: `Round`, `Hexagon (Keyed)`, `D-Shape (Keyed)`, `Round + Square Key`, or `Oval / Slot`
    - **Key Angle (°)** (for keyed shapes) or **Through** (for round through-holes)
-4. Set **Hole Clearance (+mm)** to `0` if your caliper measurement already accounts for fit, or `0.15–0.25` mm for typical FDM tolerance.
+4. Set **Hole Clearance (+mm)** to **`0.15–0.20 mm`** (recommended for FDM even when measuring with calipers, unless you use XY hole compensation in your slicer or already verified the exact fit on the **Peg-Fit Test Gauge**). Never force a tight peg—if it resists, widen the hole or increase clearance.
 
 ---
 
