@@ -727,7 +727,15 @@
             stampY = yc;
           }
         }
-        appendStampedLabel(tris, rawLabel, 0, stampY, deckThick, deckThick + 0.45, 4.2);
+        // Scale label height to fit inside the cavity chord at stampY (min 2.6mm keeps ~0.44mm stroke for 0.4mm nozzles)
+        const innerHalfW = Math.max(8, diameter / 2 - (stepped ? stepInset : 0) - 4.0);
+        const maxLabelW = Math.max(12, 2 * Math.sqrt(Math.max(16, innerHalfW * innerHalfW - stampY * stampY)) - 4.0);
+        const minCharH = 2.6;
+        const maxCharsAtMin = Math.max(3, Math.floor((maxLabelW / minCharH + 0.18) / 0.78));
+        const fittedLabel = rawLabel.slice(0, maxCharsAtMin).trim();
+        const maxCharH = maxLabelW / Math.max(0.6, 0.78 * fittedLabel.length - 0.18);
+        const charH = Math.max(minCharH, Math.min(4.2, maxCharH));
+        appendStampedLabel(tris, fittedLabel, 0, stampY, deckThick, deckThick + 0.45, charH);
       }
     }
 

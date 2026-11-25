@@ -77,6 +77,10 @@ checkWatertight(
   'hollow_stepped_hexagon_stamped',
   PUPMesh.buildBaseMesh({ shape: 'hexagon', diameter: 103.65, height: 14, stepped: true, stepInset: 2, stepHeight: 8.65, hollow: true, stampName: true, clearance: 0.2 }, { id: 'suisei_sp', name: 'Hoshimachi Suisei (SP)', pegs: sampleFig.pegs })
 );
+checkWatertight(
+  'hollow_circle_45mm_stamped',
+  PUPMesh.buildBaseMesh({ shape: 'circle', diameter: 45, height: 12, hollow: true, stampName: true, clearance: 0.2 }, { id: 'okayu', name: 'Nekomata Okayu', pegs: [{ x: -10, y: 0, diameter: 4, depth: 8, shape: 'hexagon', enabled: true }, { x: 10, y: 0, diameter: 4, depth: 8, shape: 'hexagon', enabled: true }] })
+);
 
 const gaugeTris = PUPMesh.buildTestGaugeMesh(1.8, 0.2, 23);
 checkWatertight('test_gauge', gaugeTris);
