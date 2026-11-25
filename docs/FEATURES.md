@@ -23,7 +23,7 @@ All settings in **1. Uniform Base Style** apply uniformly across every figure in
 
 ## 2. Figure Collection & Persistence
 
-- **Preloaded Presets & Safe Update Prompt**: Ships with measured POP UP PARADE presets in [`figures.js`](../figures.js) (`DEFAULT_CONFIG`). When built-in presets are updated (`presetsVersion`), returning users are prompted to update built-in figures while preserving custom figures and base style (with a note to double-check any manual edits to built-in presets).
+- **Preloaded Presets & Safe Update Prompt**: Ships with measured POP UP PARADE presets in [`figures.js`](../figures.js) (`DEFAULT_CONFIG`). When built-in presets are updated (`presetsVersion`), returning users are shown the exact list of changed figures and fields (peg layout/sizes, facing, notes) before choosing to update built-in figures while preserving custom figures and base style.
 - **Figure Search**: Filter the figure list in real time by figure name, group/series, or notes.
 - **Export Figure JSON / Merge Figure(s) / Shareable Link / Wiki Row**: Share a single figure's JSON (downloads + copies to clipboard), copy a one-click **`#fig=...` Shareable Figure Link**, copy a formatted **Wiki Markdown Row** for GitHub/Wiki contributions, or merge imported figure(s) into your existing collection without overwriting it.
 - **Per-Figure Base Width Override**: Optionally override **Width / Diameter (mm)** for a specific figure (e.g., oversized POP UP PARADE L/SP bases) while keeping the shared uniform style.

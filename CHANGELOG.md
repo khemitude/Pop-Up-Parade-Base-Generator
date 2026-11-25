@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **Built-In Preset Update Prompt**: Added `presetsVersion` tracking in `figures.js` / `app.js` to prompt returning users when built-in presets are updated, preserving custom figures and Uniform Base Style while warning to double-check any edits made to built-in presets.
+- **Built-In Preset Update Prompt**: Added `presetsVersion` tracking in `figures.js` / `app.js` that diffs built-in presets against `localStorage` and shows which specific figures and fields changed before prompting returning users to update (preserving custom figures and Uniform Base Style).
 - **Live C2C Blueprint Lines**: Toggleable **C2C Lines** overlay on the Top-Down 1:1 Blueprint showing live millimeter distances between pegs.
 - **Copy Wiki Row (Markdown)**: **Copy Wiki Row** copies a formatted Markdown table row for GitHub Issues or the Wiki `Figure Measurements Database`.
 - **Compact Fit-Test Strip (2 mm)**: **Download Fit-Test Strip (2 mm)** exports a fast `2 mm` rounded-rectangle strip tightly wrapping just the figure's peg holes and clearance.

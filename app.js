@@ -73,17 +73,35 @@ function loadState() {
 
   const latestVer = DEFAULT_CONFIG.presetsVersion || 1;
   if ((loaded.presetsVersion || 1) < latestVer) {
-    const applyUpdates = confirm(
-      'Updated built-in figure presets are available (including Nekomata Okayu\'s verified pin layout).\n\n' +
-      'Click OK to update built-in presets while keeping your custom figures and Uniform Base Style.\n' +
-      '(Note: Double-check if you previously changed any built-in figure presets—updating will overwrite those built-in entries.)'
-    );
-    if (applyUpdates) {
-      try {
-        localStorage.setItem(STORAGE_KEY + '_backup', JSON.stringify({ state: loaded, activeId: loaded.figures?.[0]?.id }));
-      } catch (e) {}
-      const customFigs = (loaded.figures || []).filter((f) => !DEFAULT_CONFIG.figures.some((df) => df.id === f.id));
-      loaded.figures = [...JSON.parse(JSON.stringify(DEFAULT_CONFIG.figures)), ...customFigs];
+    const oldById = new Map((loaded.figures || []).map((f) => [f.id, f]));
+    const changes = [];
+    for (const df of DEFAULT_CONFIG.figures) {
+      const oldF = oldById.get(df.id);
+      if (!oldF) {
+        changes.push(`• ${df.name}: new built-in preset`);
+        continue;
+      }
+      const details = [];
+      if (JSON.stringify(oldF.pegs) !== JSON.stringify(df.pegs)) details.push('peg layout / sizes');
+      if ((oldF.facing || 'down') !== (df.facing || 'down')) details.push(`facing (${oldF.facing || 'down'} → ${df.facing || 'down'})`);
+      if ((oldF.notes || '') !== (df.notes || '')) details.push('notes');
+      if (details.length) changes.push(`• ${df.name}: ${details.join(', ')}`);
+    }
+
+    if (changes.length) {
+      const applyUpdates = confirm(
+        'Updated built-in figure presets are available:\n\n' +
+        changes.join('\n') +
+        '\n\nClick OK to apply these updates while keeping your custom figures and Uniform Base Style.\n' +
+        '(Note: Double-check if you previously changed any of the built-in figures above—updating will overwrite your local edits to them.)'
+      );
+      if (applyUpdates) {
+        try {
+          localStorage.setItem(STORAGE_KEY + '_backup', JSON.stringify({ state: loaded, activeId: loaded.figures?.[0]?.id }));
+        } catch (e) {}
+        const customFigs = (loaded.figures || []).filter((f) => !DEFAULT_CONFIG.figures.some((df) => df.id === f.id));
+        loaded.figures = [...JSON.parse(JSON.stringify(DEFAULT_CONFIG.figures)), ...customFigs];
+      }
     }
     loaded.presetsVersion = latestVer;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded)); } catch (e) {}
