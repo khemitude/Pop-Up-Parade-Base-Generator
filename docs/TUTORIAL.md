@@ -58,7 +58,8 @@ Choose **Method A** if you want to measure from a photo, or **Method B** if you 
 1. Measure each peg's diameter, peg length (depth), and center-to-center distance.
 2. Under **3. Peg Layout & Measurements**:
    - Use **Distance & Angle** mode for standard 2-peg stances (enter **Peg-to-Peg Dist (mm)**, **Stance Angle (°)**, and optional **Center Offset X / Y**).
-   - Use **Manual X / Y** mode for 1-peg, 3-peg, or asymmetric stances.
+   - Use **Center-to-Center (C2C) Distances** for 3-peg triangles: enter your measured `P1 ↔ P2`, `P1 ↔ P3`, and `P2 ↔ P3` distances and click **Apply C2C → X / Y** (use **Flip** if the triangle is mirrored, then rotate as needed).
+   - Use **Manual X / Y** mode for 1-peg or direct coordinate adjustments.
 3. For each peg card, set:
    - **Diameter (mm)** and **Depth (mm)**
    - **Peg Shape**: `Round`, `Hexagon (Keyed)`, `D-Shape (Keyed)`, `Round + Square Key`, or `Oval / Slot`

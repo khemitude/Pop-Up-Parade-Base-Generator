@@ -325,6 +325,29 @@ function renderPegControls() {
   document.getElementById('centerOffsetX').value = fig.centerOffsetX ?? 0;
   document.getElementById('centerOffsetY').value = fig.centerOffsetY ?? 0;
 
+  // Center-to-center distance readout & solver inputs
+  const c2cPanel = document.getElementById('c2cPanel');
+  if (c2cPanel) {
+    if (fig.pegs.length >= 2) {
+      c2cPanel.style.display = '';
+      const p1 = fig.pegs[0], p2 = fig.pegs[1];
+      document.getElementById('c2c12').value = Math.hypot((p2.x || 0) - (p1.x || 0), (p2.y || 0) - (p1.y || 0)).toFixed(2);
+      const has3 = fig.pegs.length >= 3;
+      document.getElementById('c2c13Wrap').style.display = has3 ? '' : 'none';
+      document.getElementById('c2c23Wrap').style.display = has3 ? '' : 'none';
+      document.getElementById('c2cFlipWrap').style.display = has3 ? '' : 'none';
+      if (has3) {
+        const p3 = fig.pegs[2];
+        document.getElementById('c2c13').value = Math.hypot((p3.x || 0) - (p1.x || 0), (p3.y || 0) - (p1.y || 0)).toFixed(2);
+        document.getElementById('c2c23').value = Math.hypot((p3.x || 0) - (p2.x || 0), (p3.y || 0) - (p2.y || 0)).toFixed(2);
+      }
+      const errEl = document.getElementById('c2cError');
+      if (errEl) errEl.style.display = 'none';
+    } else {
+      c2cPanel.style.display = 'none';
+    }
+  }
+
   const container = document.getElementById('pegsContainer');
   container.innerHTML = '';
 
@@ -539,6 +562,56 @@ document.getElementById('modeManual').onclick = () => {
     rebuildAndDraw();
   };
 });
+
+document.getElementById('btnApplyC2C').onclick = () => {
+  const fig = getActiveFigure();
+  if (!fig || fig.pegs.length < 2) return;
+  const errEl = document.getElementById('c2cError');
+  const showErr = (msg) => {
+    errEl.textContent = msg;
+    errEl.style.display = '';
+  };
+  errEl.style.display = 'none';
+
+  const d12 = Number(document.getElementById('c2c12').value);
+  if (!(d12 > 0)) return showErr('P1 ↔ P2 must be greater than 0 mm.');
+
+  if (fig.pegs.length === 2) {
+    if (fig.mode === 'distance') {
+      fig.pegDistance = Number(d12.toFixed(2));
+      syncDistanceToPegs(fig);
+    } else {
+      fig.pegs[0].x = Number((-d12 / 2).toFixed(2));
+      fig.pegs[0].y = 0;
+      fig.pegs[1].x = Number((d12 / 2).toFixed(2));
+      fig.pegs[1].y = 0;
+    }
+  } else {
+    const d13 = Number(document.getElementById('c2c13').value);
+    const d23 = Number(document.getElementById('c2c23').value);
+    if (!(d13 > 0) || !(d23 > 0)) return showErr('All three distances must be greater than 0 mm.');
+    if (d12 + d13 <= d23 || d12 + d23 <= d13 || d13 + d23 <= d12) {
+      return showErr('Invalid triangle: each side must be shorter than the sum of the other two.');
+    }
+    const flip = document.getElementById('c2cFlip').checked;
+    const x3 = (d12 * d12 + d13 * d13 - d23 * d23) / (2 * d12);
+    const y3 = (flip ? -1 : 1) * Math.sqrt(Math.max(0, d13 * d13 - x3 * x3));
+
+    fig.mode = 'manual';
+    fig.pegs[0].x = 0;
+    fig.pegs[0].y = 0;
+    fig.pegs[1].x = Number(d12.toFixed(2));
+    fig.pegs[1].y = 0;
+    fig.pegs[2].x = Number(x3.toFixed(2));
+    fig.pegs[2].y = Number(y3.toFixed(2));
+    fitPegGroupInsideBase(fig);
+    refreshAutoLabelsIfStandard(fig);
+  }
+
+  saveState();
+  renderPegControls();
+  rebuildAndDraw();
+};
 
 document.getElementById('btnAddPeg').onclick = () => {
   const fig = getActiveFigure();

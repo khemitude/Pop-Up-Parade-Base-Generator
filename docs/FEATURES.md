@@ -40,6 +40,7 @@ All settings in **1. Uniform Base Style** apply uniformly across every figure in
 ### Measurement Modes
 - **Distance & Angle**: Ideal for standard 2-peg figures. Automatically computes `(x, y)` coordinates from **Peg-to-Peg Dist (mm)**, **Stance Angle (°)**, and **Center Offset X / Y (mm)**.
 - **Manual X / Y**: Direct coordinate control for 1-peg, 3-peg, or asymmetric poses.
+- **Center-to-Center (C2C) Distances**: Live readout of `P1 ↔ P2`, `P1 ↔ P3`, and `P2 ↔ P3` spacing (for 2–3+ peg figures) with **Apply C2C → X / Y** trilateration and a **Flip** toggle—type your caliper pin-to-pin distances directly to solve `(X, Y)` coordinates automatically.
 
 ### Supported Peg Hole Shapes
 Defined in [`mesh.js`](../mesh.js) (`generateHolePolygon`):

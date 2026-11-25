@@ -435,6 +435,7 @@ canvas { display: block; width: 100%; height: auto; }
 .fig-notes { font-size: 0.8rem; color: var(--muted); }
 .hint-muted { font-size: 0.72rem; color: var(--muted); }
 .hint-accent { font-size: 0.72rem; color: var(--accent); }
+.hint-warn { font-size: 0.75rem; color: var(--danger); margin-top: 6px; }
 .muted-sm { font-size: 0.78rem; color: var(--muted); }
 .ok-sm { font-size: 0.78rem; color: var(--ok); }
 .photo-grid-toggle { font-size: 0.78rem; margin-left: 4px; }
