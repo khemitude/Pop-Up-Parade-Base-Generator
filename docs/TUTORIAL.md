@@ -77,7 +77,7 @@ In **1. Uniform Base Style** (left panel), configure the shared look for all you
    - **Top Chamfer**: Adds a clean beveled top edge.
    - **Stepped Plinth**: Creates a 2-tier beveled display base (**Step Inset** and **Lower Tier Height**).
    - **Underside Magnet Pocket**: Adds a centered bottom recess (e.g., `8.2 mm` × `2.2 mm` for an 8×2 mm magnet or steel washer).
-   - **Hollow Shell (Face-Down Print — Experimental)**: Hollows the underside with internal peg bosses so the base prints face-down like an injection-molded PUP base.
+   - **Hollow Shell (Face-Down Print)**: Hollows the underside with internal peg bosses so the base prints face-down like an injection-molded PUP base. When paired with **Stepped Plinth**, it automatically adds an internal 45° chamfer so the step overhang prints cleanly without supports.
    - **Stamp Figure Name on Underside (Hollow Shell)**: Embosses the figure's name on the inner cavity floor—handy when batch-printing multiple bases.
 
 ---

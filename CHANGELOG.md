@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Fine & Micro Test Gauge Presets**: Header gauge selector for `1.8–6.2 mm (0.2 mm)`, `3.0–5.0 mm (0.1 mm Fine)`, and `3.6–4.6 mm (0.1 mm Micro)`.
 
 ### Changed
+- **Hollow Shell Graduated**: Removed the "Experimental" label from **Hollow Shell (Face-Down Print)** and documented its internal 45° stepped-plinth chamfer for support-free printing.
 - **Default Hole Clearance**: Changed default `clearance` to `0.15 mm` and added UI/documentation warnings against `0.00` clearance without gauge testing or slicer XY hole compensation.
 - **Modular Presets**: Extracted `DEFAULT_CONFIG` into `figures.js`, removed redundant `figures.json`, and updated Nekomata Okayu's peg layout.
 
