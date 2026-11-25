@@ -62,11 +62,33 @@ function performRedo() {
 }
 
 function loadState() {
+  let loaded = null;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) loaded = JSON.parse(raw);
   } catch (e) {}
-  return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  if (!loaded) {
+    return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  }
+
+  const latestVer = DEFAULT_CONFIG.presetsVersion || 1;
+  if ((loaded.presetsVersion || 1) < latestVer) {
+    const applyUpdates = confirm(
+      'Updated built-in figure presets are available (including Nekomata Okayu\'s verified pin layout).\n\n' +
+      'Click OK to update built-in presets while keeping your custom figures and Uniform Base Style.\n' +
+      '(Note: Double-check if you previously changed any built-in figure presets—updating will overwrite those built-in entries.)'
+    );
+    if (applyUpdates) {
+      try {
+        localStorage.setItem(STORAGE_KEY + '_backup', JSON.stringify({ state: loaded, activeId: loaded.figures?.[0]?.id }));
+      } catch (e) {}
+      const customFigs = (loaded.figures || []).filter((f) => !DEFAULT_CONFIG.figures.some((df) => df.id === f.id));
+      loaded.figures = [...JSON.parse(JSON.stringify(DEFAULT_CONFIG.figures)), ...customFigs];
+    }
+    loaded.presetsVersion = latestVer;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded)); } catch (e) {}
+  }
+  return loaded;
 }
 
 function saveState() {

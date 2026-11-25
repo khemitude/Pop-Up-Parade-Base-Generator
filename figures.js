@@ -4,6 +4,7 @@
  */
 
 const DEFAULT_CONFIG = {
+  presetsVersion: 2,
   defaults: {
     shape: 'hexagon',
     diameter: 103.65,
