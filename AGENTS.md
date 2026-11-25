@@ -14,7 +14,7 @@
 ## 3. Architecture & `file://` Compatibility
 - Keep the web app zero-build and 100% compatible with both **`file://`** (double-clicking [`index.html`](index.html)) and **GitHub Pages**. Load scripts via standard `<script src="...">` tags—do not introduce `fetch()` calls for local data or ES module imports that break on `file://`.
 - Keep all default base settings and pre-measured figure presets in [`figures.js`](figures.js) (`DEFAULT_CONFIG`) as the single source of truth.
+- Increment `DEFAULT_CONFIG.presetsVersion` in [`figures.js`](figures.js) whenever built-in figure presets are added or modified so returning users are prompted to update.
 
-## 4. 3D Printing Safety & Verification
-- Maintain a positive default hole clearance (`0.15 mm` in `DEFAULT_CONFIG.defaults.clearance`) and keep UI/doc warnings against `0.00` clearance without physical Peg-Fit Test Gauge testing or slicer XY hole compensation.
+## 4. Verification
 - After any JS or mesh change, run `node --check` on modified JS files and `npm test` (`node verify_mesh.js`) to verify watertight manifold STL generation.
